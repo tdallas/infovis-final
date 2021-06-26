@@ -1,0 +1,36 @@
+{
+  "name": "infovis-final",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.ts",
+  "scripts": {
+    "start": "nodemon index.ts",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/tdallas/infovis-final.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/tdallas/infovis-final/issues"
+  },
+  "homepage": "https://github.com/tdallas/infovis-final#readme",
+  "devDependencies": {
+    "nodemon": "^2.0.7",
+    "@types/express": "4.17.6",
+    "@types/node": "14.0.13",
+    "ts-node": "8.10.2",
+    "typescript": "3.9.5",
+    "eslint": "^7.29.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
+    "prettier": "^2.3.2"
+  },
+  "dependencies": {
+    "express": "^4.17.1",
+    "pg-promise": "^10.10.2"
+  }
+}
