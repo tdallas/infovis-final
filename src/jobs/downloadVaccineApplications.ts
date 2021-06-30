@@ -13,41 +13,38 @@ const DEFAULT_FILE_NAME_VACCINE_APPLICATIONS_ZIP: string | undefined =
 
 const unzipper = require('unzipper');
 
-const extractZip = async (source: string | undefined): Promise<string> => {
-  try {
-    fs.createReadStream(source)
+const extractZip = (source: string | undefined) =>
+  new Promise((resolve, reject) => {
+    console.log('Started zip extraction');
+    return fs
+      .createReadStream(source)
       .pipe(unzipper.Extract({ path: ZIP_EXTRACT_FOLDER }))
-      .on('end', () => console.log('Finish zip extracion'));
-    return DEFAULT_FILE_NAME_VACCINE_APPLICATIONS || '';
-  } catch (error) {
-    console.log('Error while extracting', error);
-    return 'ERRORASO PA';
-  }
-};
+      .on('finish', () => {
+        console.log('Finish zip extracion2', new Date().getTime());
+        return resolve;
+      });
+  });
 
-export const getVaccineApplications = async (): Promise<
-  Array<VaccineApplication>
-> => {
-  return axios({
+export const saveVaccineApplicationsFile = async () => {
+  console.log('About to download file', new Date().getTime());
+  return await axios({
     url: VACCINE_APPLICATIONS_URL,
     method: 'GET',
     responseType: 'arraybuffer',
   })
     .then((response: any) => {
-      fs.writeFile(
+      fs.writeFileSync(
         DEFAULT_FILE_NAME_VACCINE_APPLICATIONS_ZIP,
-        response.data,
-        (err: any) => {
-          if (!err) {
-            extractZip(DEFAULT_FILE_NAME_VACCINE_APPLICATIONS_ZIP);
-          } else {
-            console.log('ERROR GUARDADNO ARCHIVO');
-          }
-        }
+        response.data
       );
+      console.log('FINISH TO DOWNLOAD FILE');
+      extractZip(DEFAULT_FILE_NAME_VACCINE_APPLICATIONS_ZIP).then(() => {
+        console.log('ESTAMO?');
+      });
+      console.log('finish extraction?');
     })
     .catch((error: any) => {
-      console.log('error while getting vaccinens', error);
+      console.log('error while getting vaccines', error);
       return 'ERROR';
     });
 };
