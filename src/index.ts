@@ -5,9 +5,6 @@ require('dotenv').config();
 const {
   saveVaccineApplicationsFile,
 } = require('./jobs/downloadVaccineApplications');
-const {
-  readCsvAndPersist,
-} = require('./persistence/vaccineApplicationsRepository');
 
 const app = express();
 const PORT = 8000;
@@ -32,6 +29,8 @@ cron.schedule('*/10 * * * *', function () {
 
 app.listen(PORT, async () => {
   console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
-  await saveVaccineApplicationsFile();
+  console.log(await db.any('SELECT COUNT(*) FROM vaccine_applications'));
+
+  await saveVaccineApplicationsFile(db);
   console.log('Supuestamente termino');
 });

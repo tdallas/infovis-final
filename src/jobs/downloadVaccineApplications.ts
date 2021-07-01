@@ -13,35 +13,30 @@ const DEFAULT_FILE_NAME_VACCINE_APPLICATIONS_ZIP: string | undefined =
 
 const unzipper = require('unzipper');
 
-const extractZip = (source: string | undefined) =>
-  new Promise((resolve, reject) => {
-    console.log('Started zip extraction');
-    return fs
-      .createReadStream(source)
-      .pipe(unzipper.Extract({ path: ZIP_EXTRACT_FOLDER }))
-      .on('finish', () => {
-        console.log('Finish zip extracion2', new Date().getTime());
-        return resolve;
-      });
-  });
+const {
+  readCsvAndPersist,
+} = require('../persistence/vaccineApplicationsRepository');
 
-export const saveVaccineApplicationsFile = async () => {
+export const saveVaccineApplicationsFile = async (db: any) => {
   console.log('About to download file', new Date().getTime());
-  return await axios({
+  return axios({
     url: VACCINE_APPLICATIONS_URL,
     method: 'GET',
     responseType: 'arraybuffer',
   })
-    .then((response: any) => {
+    .then(async (response: any) => {
       fs.writeFileSync(
         DEFAULT_FILE_NAME_VACCINE_APPLICATIONS_ZIP,
         response.data
       );
       console.log('FINISH TO DOWNLOAD FILE');
-      extractZip(DEFAULT_FILE_NAME_VACCINE_APPLICATIONS_ZIP).then(() => {
-        console.log('ESTAMO?');
-      });
-      console.log('finish extraction?');
+      return await fs
+        .createReadStream(DEFAULT_FILE_NAME_VACCINE_APPLICATIONS_ZIP)
+        .pipe(unzipper.Extract({ path: ZIP_EXTRACT_FOLDER }))
+        .on('finish', () => {
+          console.log('Finish zip extracion2', new Date().getTime());
+          readCsvAndPersist(db).then(() => console.log('terminamos'));
+        });
     })
     .catch((error: any) => {
       console.log('error while getting vaccines', error);

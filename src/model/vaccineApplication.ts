@@ -1,51 +1,54 @@
 export class VaccineApplication {
+  public id: Number;
   public sex: string;
-  public ageGroup: string; // format: min-max
-  public residenceJurisdiction: string;
-  public residenceJurisdictionId: Number;
-  public residenceDepartment: string;
-  public residenceDepartmentId: Number;
-  public applicationJurisdiction: string;
-  public applicationJurisdictionId: Number;
-  public applicationDepartment: string;
-  public applicationDepartmentId: Number;
-  public applicationDate: Date;
+  public age_group: string; // format: min-max
+  public residence_jurisdiction: string;
+  public residence_jurisdiction_id: Number;
+  public residence_department: string;
+  public residence_department_id: Number;
+  public application_jurisdiction: string;
+  public application_jurisdiction_id: Number;
+  public application_department: string;
+  public application_department_id: Number;
+  public application_date: Date;
   public vaccine: string;
-  public applicationCondition: string;
-  public doseOrder: Number; // 1 or 2
-  public vaccineLot: string;
+  public application_condition: string;
+  public dose_order: Number; // 1 or 2
+  public vaccine_lot: string;
 
   constructor(
+    id: Number,
     sex: string,
-    ageGroup: string,
-    residenceJurisdiction: string,
-    residenceJurisdictionId: Number,
-    residenceDepartment: string,
-    residenceDepartmentId: Number,
-    applicationJurisdiction: string,
-    applicationJurisdictionId: Number,
-    applicationDepartment: string,
-    applicationDepartmentId: Number,
-    applicationDate: Date,
+    age_group: string,
+    residence_jurisdiction: string,
+    residence_jurisdiction_id: Number,
+    residence_department: string,
+    residence_department_id: Number,
+    application_jurisdiction: string,
+    application_jurisdiction_id: Number,
+    application_department: string,
+    application_department_id: Number,
+    application_date: Date,
     vaccine: string,
-    applicationCondition: string,
-    doseOrder: Number,
-    vaccineLot: string
+    application_condition: string,
+    dose_order: Number,
+    vaccine_lot: string
   ) {
+    this.id = id;
     this.sex = sex;
-    this.ageGroup = ageGroup;
-    this.residenceJurisdiction = residenceJurisdiction;
-    this.residenceJurisdictionId = residenceJurisdictionId;
-    this.residenceDepartment = residenceDepartment;
-    this.residenceDepartmentId = residenceDepartmentId;
-    this.applicationJurisdiction = applicationJurisdiction;
-    this.applicationJurisdictionId = applicationJurisdictionId;
-    this.applicationDepartment = applicationDepartment;
-    this.applicationDepartmentId = applicationDepartmentId;
-    this.applicationDate = applicationDate;
+    this.age_group = age_group;
+    this.residence_jurisdiction = residence_jurisdiction;
+    this.residence_jurisdiction_id = residence_jurisdiction_id;
+    this.residence_department = residence_department;
+    this.residence_department_id = residence_department_id;
+    this.application_jurisdiction = application_jurisdiction;
+    this.application_jurisdiction_id = application_jurisdiction_id;
+    this.application_department = application_department;
+    this.application_department_id = application_department_id;
+    this.application_date = application_date;
     this.vaccine = vaccine;
-    this.applicationCondition = applicationCondition;
-    this.doseOrder = doseOrder;
-    this.vaccineLot = vaccineLot;
+    this.application_condition = application_condition;
+    this.dose_order = dose_order;
+    this.vaccine_lot = vaccine_lot;
   }
 }
