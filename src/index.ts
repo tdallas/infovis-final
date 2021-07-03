@@ -22,15 +22,11 @@ const pgp = require('pg-promise')({});
 const db = pgp(databaseConfig);
 
 // Schedule tasks to be run on the server.
-cron.schedule('*/10 * * * *', function () {
+cron.schedule('*/10 * * * *', async () => {
   console.log('running a task every minute');
-  // console.log(saveVaccineApplicationsFile());
+  // await saveVaccineApplicationsFile(db);
 });
 
 app.listen(PORT, async () => {
   console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
-  console.log(await db.any('SELECT COUNT(*) FROM vaccine_applications'));
-
-  await saveVaccineApplicationsFile(db);
-  console.log('Supuestamente termino');
 });
