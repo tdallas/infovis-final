@@ -1,4 +1,4 @@
-import { VaccineApplication } from '../model/vaccineApplication';
+import { VaccineApplication } from '../models/vaccineApplication';
 
 const fs = require('fs');
 const axios = require('axios');

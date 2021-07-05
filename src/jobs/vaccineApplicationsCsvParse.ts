@@ -1,4 +1,4 @@
-import { VaccineApplication } from '../model/vaccineApplication';
+import { VaccineApplication } from '../models/vaccineApplication';
 
 const csv = require('csv-parser');
 const fs = require('fs');
