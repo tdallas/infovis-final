@@ -41,6 +41,7 @@ const parseCsv = async (db: any): Promise<Array<VaccineApplication>> => {
     )
     .pipe(csv())
     .on('data', async (row: any) => {
+      console.log('savings', savings);
       array.push(
         new VaccineApplication(
           array.length + savings * 10000,

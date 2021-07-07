@@ -1,4 +1,5 @@
 import { IDatabase } from 'pg-promise';
+import { saveVaccineApplicationsFile } from './jobs/downloadVaccineApplications';
 
 const express = require('express');
 const cron = require('node-cron');
@@ -28,6 +29,7 @@ const start = async (db: IDatabase<any>) => {
 
   app.listen(PORT, async () => {
     console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
+    saveVaccineApplicationsFile(db);
   });
 };
 
