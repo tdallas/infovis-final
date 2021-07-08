@@ -1,36 +1,46 @@
 import { VaccineApplicationsRepository } from '../repositories/vaccineApplicationsRepository';
-
-interface DoseDistributionByAgeGroup {}
-
-interface VaccineTypeDistributionByProvince {}
-
-interface ApplicationConditionsByAgeGroup {}
+import {
+  DoseDistributionByAgeGroup,
+  VaccineTypeDistributionByProvince,
+  ApplicationConditionsByAgeGroup,
+} from '../repositories/vaccineApplicationsRepository';
 
 export interface VaccineApplicationsService {
-  getDoseDistributionByAgeGroup(): Array<DoseDistributionByAgeGroup>;
+  getDoseDistributionByAgeGroup(): Promise<Array<DoseDistributionByAgeGroup>>;
 
-  getVaccineTypeDistributionByProvince(): Array<VaccineTypeDistributionByProvince>;
+  getVaccineTypeDistributionByProvince(): Promise<
+    Array<VaccineTypeDistributionByProvince>
+  >;
 
-  getTotalVaccinesApplicated(province: String | undefined): Number;
+  getTotalVaccinesApplicated(province: String | undefined): Promise<Number>;
 
   getApplicationConditionsByAgeGroup(
     province: String | undefined
-  ): Array<ApplicationConditionsByAgeGroup>;
+  ): Promise<Array<ApplicationConditionsByAgeGroup>>;
 }
 
 const configure = (
   vaccineApplicationsRepository: VaccineApplicationsRepository
 ): VaccineApplicationsService => ({
-  getDoseDistributionByAgeGroup() {
+  async getDoseDistributionByAgeGroup() {
+    return vaccineApplicationsRepository
+      .getDoseDistributionByAgeGroup()
+      .then((response) => {
+        console.log(response);
+        return response;
+      })
+      .catch((error) => {
+        console.log(error);
+        return [];
+      });
+  },
+  async getVaccineTypeDistributionByProvince() {
     return [];
   },
-  getVaccineTypeDistributionByProvince() {
-    return [];
-  },
-  getTotalVaccinesApplicated() {
+  async getTotalVaccinesApplicated() {
     return 0;
   },
-  getApplicationConditionsByAgeGroup() {
+  async getApplicationConditionsByAgeGroup() {
     return [];
   },
 });

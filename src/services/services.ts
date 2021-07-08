@@ -7,10 +7,12 @@ export interface Services {
   vaccineApplicationsService: VaccineApplicationsService;
 }
 
-export const configure = (repositories: Repositories): Services => {
+const configure = (repositories: Repositories): Services => {
   return {
     vaccineApplicationsService: vaccineApplicationsService(
       repositories.vaccineApplicationsRepository
     ),
   };
 };
+
+export default configure;

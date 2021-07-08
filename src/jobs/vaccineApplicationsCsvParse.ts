@@ -41,10 +41,10 @@ const parseCsv = async (db: any): Promise<Array<VaccineApplication>> => {
     )
     .pipe(csv())
     .on('data', async (row: any) => {
-      console.log('savings', savings);
+      // console.log('savings', savings);
       array.push(
         new VaccineApplication(
-          array.length + savings * 10000,
+          array.length + savings * 300000,
           row.sexo,
           row.grupo_etario,
           row.jurisdiccion_residencia,
@@ -62,12 +62,17 @@ const parseCsv = async (db: any): Promise<Array<VaccineApplication>> => {
           row.lote_vacuna
         )
       );
-      if (array.length % 10000 == 0) {
-        const query = pgp.helpers.insert(array, cs);
-        await db.none(query);
+      if (array.length % 300000 == 0) {
         savings++;
+        console.log('incrementing savings variable', new Date());
+        const query = pgp.helpers.insert(array, cs);
         array = [];
-        console.log(await db.any('SELECT COUNT(*) FROM vaccine_applications'));
+        try {
+          return await db.none(query);
+        } catch (error) {
+          console.log('there was an error inserting in db', error);
+          return;
+        }
       }
     })
     .on('end', async () => {

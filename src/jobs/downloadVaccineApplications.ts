@@ -6,17 +6,24 @@ const unzipper = require('unzipper');
 const { readCsvAndPersist } = require('./vaccineApplicationsCsvParse');
 
 export const saveVaccineApplicationsFile = async (db: any) => {
-  console.log('About to download file', new Date().getTime());
+  console.log('About to download file', new Date());
   return axios({
     url: process.env.VACCINE_APPLICATIONS_URL,
     method: 'GET',
     responseType: 'arraybuffer',
+    setTimeout: 40,
   })
     .then(async (response: any) => {
-      fs.writeFileSync(
-        process.env.DEFAULT_FILE_NAME_VACCINE_APPLICATIONS_ZIP,
-        response.data
-      );
+      console.log('escribiendo archivo');
+      try {
+        fs.writeFileSync(
+          process.env.DEFAULT_FILE_NAME_VACCINE_APPLICATIONS_ZIP,
+          response.data
+        );
+      } catch (error) {
+        console.log('error escribiendo archivo', error);
+        return;
+      }
       console.log('FINISH TO DOWNLOAD FILE');
       return await fs
         .createReadStream(
@@ -24,7 +31,7 @@ export const saveVaccineApplicationsFile = async (db: any) => {
         )
         .pipe(unzipper.Extract({ path: process.env.ZIP_EXTRACT_FOLDER }))
         .on('finish', () => {
-          console.log('Finish zip extracion2', new Date().getTime());
+          console.log('Finish zip extracion2', new Date());
           readCsvAndPersist(db).then(() => console.log('terminamos'));
         });
     })

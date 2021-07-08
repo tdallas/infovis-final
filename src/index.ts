@@ -1,5 +1,7 @@
 import { IDatabase } from 'pg-promise';
 import { saveVaccineApplicationsFile } from './jobs/downloadVaccineApplications';
+import Repositories from './repositories/repositories';
+import Services from './services/services';
 
 const express = require('express');
 const cron = require('node-cron');
@@ -13,23 +15,47 @@ require('dotenv').config();
 const app = express();
 const PORT = 8000;
 
-const start = async (db: IDatabase<any>) => {
-  console.log(
-    'EMPEZAMO',
-    await db.any('SELECT COUNT(*) FROM vaccine_applications')
-  );
+const OFFSET = 1000000;
 
-  app.get('/', (req: any, res: any) => res.send('Express + TypeScript Server'));
+const start = async (db: IDatabase<any>) => {
+  const { vaccineApplicationsRepository } = Repositories(db);
+  const { vaccineApplicationsService } = Services({
+    vaccineApplicationsRepository,
+  });
+
+  app.get('/', async (req: any, res: any) => {
+    await vaccineApplicationsService.getDoseDistributionByAgeGroup();
+    return res.send('Express + TypeScript Server');
+  });
 
   // Schedule tasks to be run on the server.
-  cron.schedule('*/10 * * * *', async () => {
-    console.log('running a task every minute');
-    // await saveVaccineApplicationsFile(db);
+  cron.schedule('0 0 * * *', async () => {
+    console.log('Running sync with vaccines data');
+
+    const amountOfRecords = await db.any(
+      'SELECT COUNT(*) FROM vaccine_applications'
+    );
+    if (amountOfRecords[0].count != 0) {
+      const numbersOfIteraions = amountOfRecords[0].count / OFFSET + 1;
+      console.log('numbersOfIteraions', numbersOfIteraions);
+      for (var i = 0; i < numbersOfIteraions; i++) {
+        console.log('deleting records from ', i + 'to', OFFSET + i);
+        console.log('');
+        await db.none(
+          `DELETE FROM vaccine_applications WHERE id < ${
+            i + OFFSET
+          } AND id >= ${i}`
+        );
+        console.log('records deleted');
+        console.log('');
+      }
+    }
+
+    await saveVaccineApplicationsFile(db);
   });
 
   app.listen(PORT, async () => {
     console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
-    saveVaccineApplicationsFile(db);
   });
 };
 

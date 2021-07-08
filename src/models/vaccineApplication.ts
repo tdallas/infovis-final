@@ -10,7 +10,7 @@ export class VaccineApplication {
   public application_jurisdiction_id: Number;
   public application_department: string;
   public application_department_id: Number;
-  public application_date: Date;
+  public application_date: Date | null;
   public vaccine: string;
   public application_condition: string;
   public dose_order: Number; // 1 or 2
@@ -45,7 +45,8 @@ export class VaccineApplication {
     this.application_jurisdiction_id = application_jurisdiction_id;
     this.application_department = application_department;
     this.application_department_id = application_department_id;
-    this.application_date = application_date;
+    this.application_date =
+      new Date(application_date).getTime() > 0 ? application_date : null;
     this.vaccine = vaccine;
     this.application_condition = application_condition;
     this.dose_order = dose_order;

@@ -7,8 +7,10 @@ export interface Repositories {
   vaccineApplicationsRepository: VaccineApplicationsRepository;
 }
 
-export const configure = (db: IDatabase<any>): Repositories => {
+const configure = (db: IDatabase<any>): Repositories => {
   return {
     vaccineApplicationsRepository: vaccineApplicationsRepository(db),
   };
 };
+
+export default configure;
