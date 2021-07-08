@@ -1,5 +1,5 @@
 import { IDatabase } from 'pg-promise';
-import { getDoseDistributionByAgeGroupQuery } from './queries';
+import { getDoseDistributionByAgeGroupQuery } from './create_mat_views';
 
 export interface DoseDistributionByAgeGroup {}
 
@@ -23,7 +23,7 @@ export interface VaccineApplicationsRepository {
 
 const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
   async getDoseDistributionByAgeGroup() {
-    return db.many(getDoseDistributionByAgeGroupQuery);
+    return db.many('SELECT * FROM vaccines_applications_by_dose_and_age');
   },
   async getVaccineTypeDistributionByProvince() {
     return [];

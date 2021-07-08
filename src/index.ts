@@ -24,8 +24,9 @@ const start = async (db: IDatabase<any>) => {
   });
 
   app.get('/', async (req: any, res: any) => {
-    await vaccineApplicationsService.getDoseDistributionByAgeGroup();
-    return res.send('Express + TypeScript Server');
+    const response =
+      await vaccineApplicationsService.getDoseDistributionByAgeGroup();
+    return res.send(response);
   });
 
   // Schedule tasks to be run on the server.
@@ -52,6 +53,7 @@ const start = async (db: IDatabase<any>) => {
     }
 
     await saveVaccineApplicationsFile(db);
+    // TODO create mat views here
   });
 
   app.listen(PORT, async () => {
