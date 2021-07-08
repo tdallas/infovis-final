@@ -1,5 +1,4 @@
 import { IDatabase } from 'pg-promise';
-import { getDoseDistributionByAgeGroupQuery } from './create_mat_views';
 
 export interface DoseDistributionByAgeGroup {}
 
