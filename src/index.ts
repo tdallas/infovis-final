@@ -47,43 +47,6 @@ const start = async (db: IDatabase<any>) => {
     if (amountOfRecords[0].count != 0) {
       console.log('deleting entries');
       await db.none('DELETE FROM vaccine_applications');
-      // const numbersOfIteraions = amountOfRecords[0].count / OFFSET + 1;
-      // console.log('numbersOfIteraions', numbersOfIteraions);
-      // for (var i = 0; i < numbersOfIteraions; i++) {
-      //   console.log('deleting records from ', i + 'to', OFFSET + i);
-      //   console.log('');
-      //   await db.none(
-      //     `DELETE FROM vaccine_applications WHERE id < ${
-      //       i + OFFSET
-      //     } AND id >= ${i}`
-      //   );
-      //   console.log('records deleted');
-      //   console.log('');
-      // }
-    }
-
-    await saveVaccineApplicationsFile(db);
-    console.log('refreshin mat vews');
-    await refreshViewsQueries().map((refreshQuery) => db.none(refreshQuery));
-    // TODO create mat views here
-  });
-
-  // Schedule tasks to be run on the server.
-  cron.schedule('0 0 30 * *', async () => {
-    console.log('running view refresh');
-    await refreshViewsQueries().map((refreshQuery) => db.none(refreshQuery));
-  });
-
-  app.listen(PORT, async () => {
-    console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
-
-    //REMOVE
-    const amountOfRecords = await db.any(
-      'SELECT COUNT(*) FROM vaccine_applications'
-    );
-    if (amountOfRecords[0].count != 0) {
-      console.log('deleting entries');
-      await db.none('DELETE FROM vaccine_applications');
     }
 
     saveVaccineApplicationsFile(db).then(async () => {
@@ -95,6 +58,16 @@ const start = async (db: IDatabase<any>) => {
         console.log('finish refreshing mat views');
       });
     });
+  });
+
+  // Schedule tasks to be run on the server.
+  cron.schedule('0 0 30 * *', async () => {
+    console.log('running view refresh');
+    await refreshViewsQueries().map((refreshQuery) => db.none(refreshQuery));
+  });
+
+  app.listen(PORT, async () => {
+    console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
   });
 };
 
