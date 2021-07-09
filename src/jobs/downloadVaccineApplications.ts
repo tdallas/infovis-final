@@ -5,13 +5,13 @@ const unzipper = require('unzipper');
 
 const { readCsvAndPersist } = require('./vaccineApplicationsCsvParse');
 
-export const saveVaccineApplicationsFile = async (db: any) => {
+export const saveVaccineApplicationsFile = async (db: any): Promise<any> => {
   console.log('About to download file', new Date());
   return axios({
     url: process.env.VACCINE_APPLICATIONS_URL,
     method: 'GET',
     responseType: 'arraybuffer',
-    setTimeout: 40,
+    timeout: 40000,
   })
     .then(async (response: any) => {
       console.log('escribiendo archivo');
@@ -25,15 +25,17 @@ export const saveVaccineApplicationsFile = async (db: any) => {
         return;
       }
       console.log('FINISH TO DOWNLOAD FILE');
-      return await fs
-        .createReadStream(
-          process.env.DEFAULT_FILE_NAME_VACCINE_APPLICATIONS_ZIP
-        )
-        .pipe(unzipper.Extract({ path: process.env.ZIP_EXTRACT_FOLDER }))
-        .on('finish', () => {
-          console.log('Finish zip extracion2', new Date());
-          readCsvAndPersist(db).then(() => console.log('terminamos'));
-        });
+      return new Promise((resolve, reject) =>
+        fs
+          .createReadStream(
+            process.env.DEFAULT_FILE_NAME_VACCINE_APPLICATIONS_ZIP
+          )
+          .pipe(unzipper.Extract({ path: process.env.ZIP_EXTRACT_FOLDER }))
+          .on('finish', () => {
+            console.log('Finish zip extracion2', new Date());
+            return resolve(readCsvAndPersist(db));
+          })
+      );
     })
     .catch((error: any) => {
       console.log('error while getting vaccines', error);
