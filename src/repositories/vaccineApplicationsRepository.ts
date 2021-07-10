@@ -18,6 +18,8 @@ export interface VaccineApplicationsRepository {
   getApplicationConditionsByAgeGroup(
     province: String | undefined
   ): Promise<Array<ApplicationConditionsByAgeGroup>>;
+
+  getDailyApplications(): Promise<Array<any>>;
 }
 
 const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
@@ -32,6 +34,9 @@ const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
   },
   async getApplicationConditionsByAgeGroup() {
     return [];
+  },
+  async getDailyApplications() {
+    return db.many('SELECT * FROM daily_applications_by_vaccine');
   },
 });
 

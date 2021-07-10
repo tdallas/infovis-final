@@ -17,6 +17,8 @@ export interface VaccineApplicationsService {
   getApplicationConditionsByAgeGroup(
     province: String | undefined
   ): Promise<Array<ApplicationConditionsByAgeGroup>>;
+
+  getDailyApplications(): Promise<Array<any>>;
 }
 
 const configure = (
@@ -40,6 +42,16 @@ const configure = (
   },
   async getApplicationConditionsByAgeGroup() {
     return [];
+  },
+  async getDailyApplications() {
+    return vaccineApplicationsRepository
+      .getDailyApplications()
+      .then((response) => {
+        return response;
+      })
+      .catch((error) => {
+        return [];
+      });
   },
 });
 

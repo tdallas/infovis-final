@@ -51,9 +51,14 @@ const start = async (db: IDatabase<any>) => {
     vaccineApplicationsRepository,
   });
 
-  app.get('/', async (req: any, res: any) => {
+  app.get('/doseDistributionByAgeGroup', async (req: any, res: any) => {
     const response =
       await vaccineApplicationsService.getDoseDistributionByAgeGroup();
+    return res.send(response);
+  });
+
+  app.get('/dailyApplications', async (req: any, res: any) => {
+    const response = await vaccineApplicationsService.getDailyApplications();
     return res.send(response);
   });
 
