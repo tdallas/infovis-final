@@ -63,12 +63,24 @@ WHERE application_date IS NOT NULL
 GROUP BY application_date, vaccine
 )`;
 
+const applicationsByPlace = `CREATE MATERIALIZED VIEW IF NOT EXISTS applications_by_place AS
+(
+SELECT age_group,
+       dose_order,
+       application_department,
+       application_jurisdiction,
+       COUNT(*)
+FROM vaccine_applications
+GROUP BY age_group, dose_order, application_department, application_jurisdiction
+    )`;
+
 const materializedViews = [
   'total_applications',
   'total_applications_by_vaccine_and_dose',
   'vaccines_applications_by_dose_and_age',
   'dose_count',
   'daily_applications_by_vaccine',
+  'applications_by_place',
 ];
 
 const refreshMatView = (view: String) => `REFRESH MATERIALIZED VIEW ${view}`;
@@ -83,4 +95,5 @@ export default [
   totalApplicationsByVaccineAndDoseViewQuery,
   getDoseDistributionCountVieQuery,
   dailyApplicationsViewQuery,
+  applicationsByPlace,
 ];
