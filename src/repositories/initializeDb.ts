@@ -17,24 +17,23 @@ const createTablesQuery = `CREATE TABLE IF NOT EXISTS vaccine_applications(
   vaccine_lot varchar(150)
 )`;
 
-const getDoseDistributionByAgeGroupViewQuery = `CREATE MATERIALIZED VIEW IF NOT EXISTS vaccines_applications_by_dose_and_age AS
-(
-WITH vaccines_by_dose_order AS (SELECT dose_order, vaccine, sex, COUNT(*) AS totalByDose
+const getDoseDistributionCountVieQuery = `CREATE MATERIALIZED VIEW IF NOT EXISTS dose_count AS (
+  SELECT dose_order, COUNT(*) AS totalByDose
                                 FROM vaccine_applications
                                 WHERE age_group != 'S.I.'
-                                GROUP BY dose_order, vaccine, sex
-),
-     vaccines_by_dose_and_age AS (
+                                GROUP BY dose_order
+)`;
+
+const getDoseDistributionByAgeGroupViewQuery = `CREATE MATERIALIZED VIEW IF NOT EXISTS vaccines_applications_by_dose_and_age AS
+(
+WITH vaccines_by_dose_and_age AS (
          SELECT age_group, dose_order, vaccine, sex, COUNT(*)
          FROM vaccine_applications
          WHERE age_group != 'S.I.'
          GROUP BY age_group, dose_order, vaccine, sex
      )
-SELECT age_group, vda.dose_order, vda.vaccine, vda.sex, vda.count, totalByDose
-FROM vaccines_by_dose_and_age vda,
-     vaccines_by_dose_order vb
-WHERE vda.dose_order = vb.dose_order
-    )
+SELECT age_group, vda.dose_order, vda.vaccine, vda.sex, vda.count
+FROM vaccines_by_dose_and_age vda)
 `;
 
 const totalApplicationsViewQuery = `CREATE MATERIALIZED VIEW IF NOT EXISTS total_applications AS
@@ -56,10 +55,20 @@ SELECT vaccine,
 FROM vaccine_applications_by_vaccine,
      total_applications)`;
 
+const dailyApplicationsViewQuery = `CREATE MATERIALIZED VIEW IF NOT EXISTS daily_applications_by_vaccine AS
+(
+SELECT vaccine, application_date, COUNT(*)
+FROM vaccine_applications
+WHERE application_date IS NOT NULL
+GROUP BY application_date, vaccine
+)`;
+
 const materializedViews = [
   'total_applications',
   'total_applications_by_vaccine_and_dose',
   'vaccines_applications_by_dose_and_age',
+  'dose_count',
+  'daily_applications_by_vaccine',
 ];
 
 const refreshMatView = (view: String) => `REFRESH MATERIALIZED VIEW ${view}`;
@@ -72,4 +81,6 @@ export default [
   getDoseDistributionByAgeGroupViewQuery,
   totalApplicationsViewQuery,
   totalApplicationsByVaccineAndDoseViewQuery,
+  getDoseDistributionCountVieQuery,
+  dailyApplicationsViewQuery,
 ];
