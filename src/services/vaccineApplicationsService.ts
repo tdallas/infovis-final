@@ -12,10 +12,12 @@ import { DoseDistributionByAgeGroup } from '../responses/doseDistributionByAgeGr
 export interface VaccineApplicationsService {
   getDoseDistributionByAgeGroup(): Promise<Array<DoseDistributionByAgeGroup>>;
 
-  getVaccineTypeDistributionByProvince(): Promise<
-    Array<VaccineTypeDistributionByProvince>
-  >;
+  // if no province is supplied, look for whole country
+  getVaccineDistribution(
+    province: string | undefined
+  ): Promise<Array<VaccineTypeDistributionByProvince>>;
 
+  // if no province is supplied, look for whole country
   getTotalVaccinesApplicated(province: String | undefined): Promise<Number>;
 
   getApplicationConditionsByAgeGroup(
@@ -38,13 +40,13 @@ const configure = (
         return [];
       });
   },
-  async getVaccineTypeDistributionByProvince() {
+  async getVaccineDistribution(province: string | undefined) {
     return [];
   },
-  async getTotalVaccinesApplicated() {
+  async getTotalVaccinesApplicated(province: string | undefined) {
     return 0;
   },
-  async getApplicationConditionsByAgeGroup() {
+  async getApplicationConditionsByAgeGroup(province: string | undefined) {
     return [];
   },
   async getDailyApplications() {

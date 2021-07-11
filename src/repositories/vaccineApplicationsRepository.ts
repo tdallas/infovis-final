@@ -11,34 +11,56 @@ export interface VaccineApplicationsRepository {
     Array<DoseDistributionByAgeGroupSqlResult>
   >;
 
-  getVaccineTypeDistributionByProvince(): Promise<
-    Array<VaccineTypeDistributionByProvince>
-  >;
+  getVaccineTypeDistribution(
+    province: string | undefined
+  ): Promise<Array<VaccineTypeDistributionByProvince>>;
 
-  getTotalVaccinesApplicated(province: String | undefined): Promise<Number>;
+  getTotalVaccinesApplicated(province: string | undefined): Promise<Number>;
 
   getApplicationConditionsByAgeGroup(
-    province: String | undefined
+    province: string | undefined,
+    age_group: string | undefined
   ): Promise<Array<ApplicationConditionsByAgeGroup>>;
 
   getDailyApplications(): Promise<Array<DailyApplicationsSqlResult>>;
+
+  getApplicationsByAgeGroup(): Promise<Array<any>>;
 }
 
 const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
   async getDoseDistributionByAgeGroup() {
     return db.many('SELECT * FROM vaccines_applications_by_dose_and_age');
   },
-  async getVaccineTypeDistributionByProvince() {
-    return [];
+  async getVaccineTypeDistribution(province: string | undefined) {
+    return db.many(
+      `SELECT vaccine, COUNT(*) FROM applications_by_place ` +
+        (province ? `WHERE application_jurisdiction = ${province}` : '') +
+        `GROUP BY application_jurisdiction`
+    );
   },
-  async getTotalVaccinesApplicated() {
-    return 0;
+  async getTotalVaccinesApplicated(province: string | undefined) {
+    return db.one(
+      `SELECT COUNT(*) FROM applications_by_place ` +
+        (province ? `WHERE application_jurisdiction = ${province}` : '')
+    );
   },
-  async getApplicationConditionsByAgeGroup() {
-    return [];
+  async getApplicationConditionsByAgeGroup(
+    province: string | undefined,
+    age_group: string | undefined
+  ) {
+    return db.many(
+      `SELECT application_condition, age_group, COUNT(*) FROM applications_by_place ` +
+        (province ? `WHERE application_jurisdiction = ${province}` : '') +
+        (province ? `AND age_group = ${age_group}` : '')
+    );
   },
   async getDailyApplications() {
     return db.many('SELECT * FROM daily_applications_by_vaccine');
+  },
+  async getApplicationsByAgeGroup() {
+    return db.many(
+      'SELECT sex, COUNT(*) FROM vaccines_by_dose_and_age GROUP BY sex'
+    );
   },
 });
 
