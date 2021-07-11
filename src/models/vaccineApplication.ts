@@ -47,7 +47,8 @@ export class VaccineApplication {
     this.application_department_id = application_department_id;
     this.application_date =
       new Date(application_date).getTime() > 0 ? application_date : null;
-    this.vaccine = vaccine;
+    this.vaccine =
+      vaccine.toUpperCase() === 'COVISHIELD' ? 'AstraZeneca' : vaccine;
     this.application_condition = application_condition;
     this.dose_order = dose_order;
     this.vaccine_lot = vaccine_lot;

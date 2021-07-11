@@ -1,9 +1,13 @@
 import { VaccineApplicationsRepository } from '../repositories/vaccineApplicationsRepository';
 import {
-  DoseDistributionByAgeGroup,
   VaccineTypeDistributionByProvince,
   ApplicationConditionsByAgeGroup,
 } from '../repositories/vaccineApplicationsRepository';
+import {
+  DailyApplications,
+  DailyApplicationsSqlResult,
+} from '../responses/dailyApplications';
+import { DoseDistributionByAgeGroup } from '../responses/doseDistributionByAgeGroup';
 
 export interface VaccineApplicationsService {
   getDoseDistributionByAgeGroup(): Promise<Array<DoseDistributionByAgeGroup>>;
@@ -18,7 +22,7 @@ export interface VaccineApplicationsService {
     province: String | undefined
   ): Promise<Array<ApplicationConditionsByAgeGroup>>;
 
-  getDailyApplications(): Promise<Array<any>>;
+  getDailyApplications(): Promise<Array<DailyApplications>>;
 }
 
 const configure = (
@@ -28,7 +32,7 @@ const configure = (
     return vaccineApplicationsRepository
       .getDoseDistributionByAgeGroup()
       .then((response) => {
-        return response;
+        return response.map((each) => new DoseDistributionByAgeGroup(each));
       })
       .catch((error) => {
         return [];
@@ -46,8 +50,8 @@ const configure = (
   async getDailyApplications() {
     return vaccineApplicationsRepository
       .getDailyApplications()
-      .then((response) => {
-        return response;
+      .then((response: Array<DailyApplicationsSqlResult>) => {
+        return response.map((each) => new DailyApplications(each));
       })
       .catch((error) => {
         return [];

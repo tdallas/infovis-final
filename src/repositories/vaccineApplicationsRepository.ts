@@ -1,13 +1,15 @@
 import { IDatabase } from 'pg-promise';
-
-export interface DoseDistributionByAgeGroup {}
+import { DailyApplicationsSqlResult } from '../responses/dailyApplications';
+import { DoseDistributionByAgeGroupSqlResult } from '../responses/doseDistributionByAgeGroup';
 
 export interface VaccineTypeDistributionByProvince {}
 
 export interface ApplicationConditionsByAgeGroup {}
 
 export interface VaccineApplicationsRepository {
-  getDoseDistributionByAgeGroup(): Promise<Array<DoseDistributionByAgeGroup>>;
+  getDoseDistributionByAgeGroup(): Promise<
+    Array<DoseDistributionByAgeGroupSqlResult>
+  >;
 
   getVaccineTypeDistributionByProvince(): Promise<
     Array<VaccineTypeDistributionByProvince>
@@ -19,7 +21,7 @@ export interface VaccineApplicationsRepository {
     province: String | undefined
   ): Promise<Array<ApplicationConditionsByAgeGroup>>;
 
-  getDailyApplications(): Promise<Array<any>>;
+  getDailyApplications(): Promise<Array<DailyApplicationsSqlResult>>;
 }
 
 const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({

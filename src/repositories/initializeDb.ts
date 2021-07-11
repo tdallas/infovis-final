@@ -33,7 +33,8 @@ WITH vaccines_by_dose_and_age AS (
          GROUP BY age_group, dose_order, vaccine, sex
      )
 SELECT age_group, vda.dose_order, vda.vaccine, vda.sex, vda.count
-FROM vaccines_by_dose_and_age vda)
+FROM vaccines_by_dose_and_age vda
+ORDER BY age_group)
 `;
 
 const totalApplicationsViewQuery = `CREATE MATERIALIZED VIEW IF NOT EXISTS total_applications AS
@@ -72,6 +73,7 @@ SELECT age_group,
        COUNT(*)
 FROM vaccine_applications
 GROUP BY age_group, dose_order, application_department, application_jurisdiction
+ORDER BY age_group
     )`;
 
 const materializedViews = [

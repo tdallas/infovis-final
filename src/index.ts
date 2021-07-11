@@ -8,6 +8,7 @@ import initilizeDbQueries, {
 
 const express = require('express');
 const cron = require('node-cron');
+const cors = require('cors');
 
 require('dotenv').config();
 
@@ -16,6 +17,8 @@ require('dotenv').config();
 // } = require('./jobs/downloadVaccineApplications');
 
 const app = express();
+app.use(cors());
+
 const PORT = 8000;
 
 const initializeDb = (db: IDatabase<any>) => {
