@@ -1,63 +1,72 @@
 import { IDatabase } from 'pg-promise';
 import { DailyApplicationsSqlResult } from '../responses/dailyApplications';
 import { DoseDistributionByAgeGroupSqlResult } from '../responses/doseDistributionByAgeGroup';
+import { Location } from '../services/vaccineApplicationsService';
 
 export interface VaccineTypeDistributionByProvince {}
 
 export interface ApplicationConditionsByAgeGroup {}
 
 export interface VaccineApplicationsRepository {
-  getDoseDistributionByAgeGroup(): Promise<
-    Array<DoseDistributionByAgeGroupSqlResult>
-  >;
+  getDoseDistributionByAgeGroup(
+    location: Location
+  ): Promise<Array<DoseDistributionByAgeGroupSqlResult>>;
 
   getVaccineTypeDistribution(
-    province: string | undefined
+    location: Location
   ): Promise<Array<VaccineTypeDistributionByProvince>>;
 
-  getTotalVaccinesApplicated(province: string | undefined): Promise<Number>;
+  getTotalVaccinesApplicated(location: Location): Promise<Number>;
 
   getApplicationConditionsByAgeGroup(
-    province: string | undefined,
+    location: Location,
     age_group: string | undefined
   ): Promise<Array<ApplicationConditionsByAgeGroup>>;
 
-  getDailyApplications(): Promise<Array<DailyApplicationsSqlResult>>;
+  getDailyApplications(
+    location: Location
+  ): Promise<Array<DailyApplicationsSqlResult>>;
 
-  getApplicationsByAgeGroup(): Promise<Array<any>>;
+  getApplicationsByAgeGroup(location: Location): Promise<Array<any>>;
 }
 
 const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
-  async getDoseDistributionByAgeGroup() {
+  async getDoseDistributionByAgeGroup(location: Location) {
     return db.many('SELECT * FROM vaccines_applications_by_dose_and_age');
   },
-  async getVaccineTypeDistribution(province: string | undefined) {
+  async getVaccineTypeDistribution(location: Location) {
     return db.many(
       `SELECT vaccine, COUNT(*) FROM applications_by_place ` +
-        (province ? `WHERE application_jurisdiction = ${province}` : '') +
+        (location.province
+          ? `WHERE application_jurisdiction = ${location.province}`
+          : '') +
         `GROUP BY application_jurisdiction`
     );
   },
-  async getTotalVaccinesApplicated(province: string | undefined) {
+  async getTotalVaccinesApplicated(location: Location) {
     return db.one(
       `SELECT COUNT(*) FROM applications_by_place ` +
-        (province ? `WHERE application_jurisdiction = ${province}` : '')
+        (location.province
+          ? `WHERE application_jurisdiction = ${location.province}`
+          : '')
     );
   },
   async getApplicationConditionsByAgeGroup(
-    province: string | undefined,
+    location: Location,
     age_group: string | undefined
   ) {
     return db.many(
       `SELECT application_condition, age_group, COUNT(*) FROM applications_by_place ` +
-        (province ? `WHERE application_jurisdiction = ${province}` : '') +
-        (province ? `AND age_group = ${age_group}` : '')
+        (location.province
+          ? `WHERE application_jurisdiction = ${location.province}`
+          : '') +
+        (age_group ? `AND age_group = ${age_group}` : '')
     );
   },
-  async getDailyApplications() {
+  async getDailyApplications(location: Location) {
     return db.many('SELECT * FROM daily_applications_by_vaccine');
   },
-  async getApplicationsByAgeGroup() {
+  async getApplicationsByAgeGroup(location: Location) {
     return db.many(
       'SELECT sex, COUNT(*) FROM vaccines_by_dose_and_age GROUP BY sex'
     );

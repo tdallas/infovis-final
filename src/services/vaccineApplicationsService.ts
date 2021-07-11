@@ -9,30 +9,37 @@ import {
 } from '../responses/dailyApplications';
 import { DoseDistributionByAgeGroup } from '../responses/doseDistributionByAgeGroup';
 
+export interface Location {
+  province: string | undefined;
+  department: string | undefined;
+}
+
 export interface VaccineApplicationsService {
-  getDoseDistributionByAgeGroup(): Promise<Array<DoseDistributionByAgeGroup>>;
+  getDoseDistributionByAgeGroup(
+    location: Location
+  ): Promise<Array<DoseDistributionByAgeGroup>>;
 
   // if no province is supplied, look for whole country
   getVaccineDistribution(
-    province: string | undefined
+    location: Location
   ): Promise<Array<VaccineTypeDistributionByProvince>>;
 
   // if no province is supplied, look for whole country
-  getTotalVaccinesApplicated(province: String | undefined): Promise<Number>;
+  getTotalVaccinesApplicated(location: Location): Promise<Number>;
 
   getApplicationConditionsByAgeGroup(
-    province: String | undefined
+    location: Location
   ): Promise<Array<ApplicationConditionsByAgeGroup>>;
 
-  getDailyApplications(): Promise<Array<DailyApplications>>;
+  getDailyApplications(location: Location): Promise<Array<DailyApplications>>;
 }
 
 const configure = (
   vaccineApplicationsRepository: VaccineApplicationsRepository
 ): VaccineApplicationsService => ({
-  async getDoseDistributionByAgeGroup() {
+  async getDoseDistributionByAgeGroup(location: Location) {
     return vaccineApplicationsRepository
-      .getDoseDistributionByAgeGroup()
+      .getDoseDistributionByAgeGroup(location)
       .then((response) => {
         return response.map((each) => new DoseDistributionByAgeGroup(each));
       })
@@ -40,18 +47,18 @@ const configure = (
         return [];
       });
   },
-  async getVaccineDistribution(province: string | undefined) {
+  async getVaccineDistribution(location: Location) {
     return [];
   },
-  async getTotalVaccinesApplicated(province: string | undefined) {
+  async getTotalVaccinesApplicated(location: Location) {
     return 0;
   },
-  async getApplicationConditionsByAgeGroup(province: string | undefined) {
+  async getApplicationConditionsByAgeGroup(location: Location) {
     return [];
   },
-  async getDailyApplications() {
+  async getDailyApplications(location: Location) {
     return vaccineApplicationsRepository
-      .getDailyApplications()
+      .getDailyApplications(location)
       .then((response: Array<DailyApplicationsSqlResult>) => {
         return response.map((each) => new DailyApplications(each));
       })
