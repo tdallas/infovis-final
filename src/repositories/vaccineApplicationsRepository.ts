@@ -30,25 +30,37 @@ export interface VaccineApplicationsRepository {
   getApplicationsByAgeGroup(location: Location): Promise<Array<any>>;
 }
 
+const whereLocationStatement = (location: Location) => {
+  if (location.department && location.province) {
+    return (
+      `WHERE application_jurisdiction = '${location.province}'` +
+      ` AND application_department = '${location.department}' `
+    );
+  } else if (location.department) {
+    return `WHERE application_department = '${location.department}' `;
+  } else if (location.province) {
+    return `WHERE application_jurisdiction = '${location.province}' `;
+  }
+  return '';
+};
+
 const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
   async getDoseDistributionByAgeGroup(location: Location) {
-    return db.many('SELECT * FROM vaccines_applications_by_dose_and_age');
+    return db.many(
+      'SELECT * FROM applications_by_place ' + whereLocationStatement(location)
+    );
   },
   async getVaccineTypeDistribution(location: Location) {
     return db.many(
       `SELECT vaccine, COUNT(*) FROM applications_by_place ` +
-        (location.province
-          ? `WHERE application_jurisdiction = ${location.province}`
-          : '') +
+        whereLocationStatement(location) +
         `GROUP BY application_jurisdiction`
     );
   },
   async getTotalVaccinesApplicated(location: Location) {
     return db.one(
       `SELECT COUNT(*) FROM applications_by_place ` +
-        (location.province
-          ? `WHERE application_jurisdiction = ${location.province}`
-          : '')
+        whereLocationStatement(location)
     );
   },
   async getApplicationConditionsByAgeGroup(
@@ -57,10 +69,12 @@ const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
   ) {
     return db.many(
       `SELECT application_condition, age_group, COUNT(*) FROM applications_by_place ` +
-        (location.province
-          ? `WHERE application_jurisdiction = ${location.province}`
-          : '') +
-        (age_group ? `AND age_group = ${age_group}` : '')
+        +whereLocationStatement(location) +
+        (age_group && (location.province || location.department)
+          ? `AND age_group = ${age_group}`
+          : age_group
+          ? `WHERE age_group = ${age_group}`
+          : '')
     );
   },
   async getDailyApplications(location: Location) {

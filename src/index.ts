@@ -5,16 +5,16 @@ import Services from './services/services';
 import initilizeDbQueries, {
   refreshViewsQueries,
 } from './repositories/initializeDb';
+import {
+  ApplicationsByAgeGroupRequest,
+  ByLocationRequest,
+} from './requests/requests';
 
 const express = require('express');
 const cron = require('node-cron');
 const cors = require('cors');
 
 require('dotenv').config();
-
-// const {
-//   saveVaccineApplicationsFile,
-// } = require('./jobs/downloadVaccineApplications');
 
 const app = express();
 app.use(cors());
@@ -54,14 +54,21 @@ const start = async (db: IDatabase<any>) => {
     vaccineApplicationsRepository,
   });
 
-  app.get('/doseDistributionByAgeGroup', async (req: any, res: any) => {
-    const response =
-      await vaccineApplicationsService.getDoseDistributionByAgeGroup();
-    return res.send(response);
-  });
+  app.get(
+    '/doseDistributionByAgeGroup',
+    async (req: ApplicationsByAgeGroupRequest, res: any) => {
+      const response =
+        await vaccineApplicationsService.getDoseDistributionByAgeGroup(
+          req.query
+        );
+      return res.send(response);
+    }
+  );
 
-  app.get('/dailyApplications', async (req: any, res: any) => {
-    const response = await vaccineApplicationsService.getDailyApplications();
+  app.get('/dailyApplications', async (req: ByLocationRequest, res: any) => {
+    const response = await vaccineApplicationsService.getDailyApplications(
+      req.query
+    );
     return res.send(response);
   });
 
