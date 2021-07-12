@@ -35,9 +35,9 @@ export interface VaccineApplicationsRepository {
     location: Location
   ): Promise<Array<DailyApplicationsSqlResult>>;
 
-  getApplicationsByAgeGroup(age_group: string | undefined): Promise<Array<any>>;
-
-  getTotalApplicationsDistributionByVaccine(): Promise<Array<any>>;
+  getTotalApplicationsDistributionByVaccine(
+    age_group: string | undefined
+  ): Promise<Array<any>>;
 }
 
 const whereLocationStatement = (location: Location) => {
@@ -55,8 +55,16 @@ const whereLocationStatement = (location: Location) => {
 };
 
 const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
-  async getTotalApplicationsDistributionByVaccine() {
-    return db.many('SELECT * FROM total_applications_by_vaccine_and_dose');
+  async getTotalApplicationsDistributionByVaccine(
+    age_group: string | undefined
+  ) {
+    return age_group
+      ? db.many(
+          'SELECT age_group, sex, sum(applications) FROM vaccines_applications_by_dose_and_age ' +
+            ` WHERE age_group = ${age_group}` +
+            ' GROUP BY age_group, sex'
+        )
+      : db.many('SELECT * FROM total_applications_by_vaccine_and_dose');
   },
   async getDoseDistributionByAgeGroup(location: Location) {
     return db.many(
@@ -114,13 +122,6 @@ const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
     return db.many(
       'SELECT * FROM daily_applications_by_vaccine' +
         whereLocationStatement(location)
-    );
-  },
-  async getApplicationsByAgeGroup(age_group: string | undefined) {
-    return db.many(
-      'SELECT age_group, sex, SUM(applications) FROM vaccines_applications_by_dose_and_age ' +
-        ` WHERE age_group = ${age_group}` +
-        ' GROUP BY age_group, sex'
     );
   },
 });
