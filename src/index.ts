@@ -4,6 +4,7 @@ import Services from './services/services';
 import initilizeDbQueries from './repositories/initializeDb';
 import { registerEndpoints } from './endpoints';
 import { registerCrons } from './crons';
+import { registerSwagger } from './swagger';
 
 const express = require('express');
 const cors = require('cors');
@@ -25,6 +26,8 @@ const start = async (db: IDatabase<any>) => {
 
   const repositories = Repositories(db);
   const services = Services(repositories);
+
+  registerSwagger(app);
 
   registerEndpoints(app, services);
 
