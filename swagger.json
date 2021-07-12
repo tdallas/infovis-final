@@ -36,6 +36,15 @@
           }
         }
       }
-    }
+    },
+    "/count": {},
+    "/last_update": {},
+    "/vaccines": {},
+    "/vaccines_dose": {},
+    "/vaccines_from": {},
+    "/vaccines_daily": {},
+    "/applications_condition": {},
+    "/applications_sex": {},
+    "/vaccines_distribution_details": {}
   }
 }

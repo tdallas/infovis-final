@@ -1,5 +1,6 @@
 import { IDatabase } from 'pg-promise';
-import { saveVaccineApplicationsFile } from './jobs/downloadVaccineApplications';
+import { saveVaccineApplicationsFile } from './jobs/applications/downloadVaccineApplications';
+import { saveVaccineReceptions } from './jobs/receptions/downloadVaccineReceptions';
 import { refreshViewsQueries } from './repositories/initializeDb';
 
 const cron = require('node-cron');
@@ -13,7 +14,7 @@ export const registerCrons = (db: IDatabase<any>) => {
   });
 };
 
-const syncData = async (db: IDatabase<any>) => {
+export const syncData = async (db: IDatabase<any>) => {
   const amountOfRecords = await db.any(
     'SELECT COUNT(*) FROM vaccine_applications'
   );
@@ -23,12 +24,17 @@ const syncData = async (db: IDatabase<any>) => {
   }
 
   saveVaccineApplicationsFile(db).then(async () => {
-    console.log('finish to do everything');
+    console.log('finish to do applications');
     console.log('refreshin mat vews');
     Promise.all(
       refreshViewsQueries().map((refreshQuery) => db.none(refreshQuery))
     ).then(() => {
       console.log('finish refreshing mat views');
     });
+  });
+
+  saveVaccineReceptions(db).then(async () => {
+    console.log('finish to do receptions');
+    db.one('SELECT COUNT(*) FROM vaccine_receptions');
   });
 };

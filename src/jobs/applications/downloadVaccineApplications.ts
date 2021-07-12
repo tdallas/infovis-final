@@ -6,7 +6,7 @@ const unzipper = require('unzipper');
 const { readCsvAndPersist } = require('./vaccineApplicationsCsvParse');
 
 export const saveVaccineApplicationsFile = async (db: any): Promise<any> => {
-  console.log('About to download file', new Date());
+  console.log('About to download applications file', new Date());
   return axios({
     url: process.env.VACCINE_APPLICATIONS_URL,
     method: 'GET',
@@ -39,6 +39,6 @@ export const saveVaccineApplicationsFile = async (db: any): Promise<any> => {
     })
     .catch((error: any) => {
       console.log('error while getting vaccines', error);
-      return 'ERROR';
+      return error;
     });
 };

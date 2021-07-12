@@ -3,7 +3,7 @@ import Repositories from './repositories/repositories';
 import Services from './services/services';
 import initilizeDbQueries from './repositories/initializeDb';
 import { registerEndpoints } from './endpoints';
-import { registerCrons } from './crons';
+import { registerCrons, syncData } from './crons';
 import { registerSwagger } from './swagger';
 
 const express = require('express');
@@ -35,7 +35,7 @@ const start = async (db: IDatabase<any>) => {
 
   app.listen(PORT, async () => {
     console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
-    // await syncData(db);
+    await syncData(db);
   });
 };
 

@@ -16,3 +16,9 @@ CREATE TABLE vaccine_applications(
     dose_order integer,
     vaccine_lot varchar(150)
 );
+
+CREATE TABLE vaccine_receptions(
+    id SERIAL PRIMARY KEY,
+    reception_date date,
+    dosis_received integer
+)

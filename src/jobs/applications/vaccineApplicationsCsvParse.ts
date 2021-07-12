@@ -1,5 +1,5 @@
-import { VaccineApplication } from '../models/vaccineApplication';
-import { refreshViewsQueries } from '../repositories/initializeDb';
+import { VaccineApplication } from '../../models/vaccineApplication';
+import { refreshViewsQueries } from '../../repositories/initializeDb';
 
 const csv = require('csv-parser');
 const fs = require('fs');
