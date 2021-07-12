@@ -12,13 +12,21 @@ export interface VaccineApplicationsRepository {
     location: Location
   ): Promise<Array<DoseDistributionByAgeGroupSqlResult>>;
 
-  getVaccineTypeDistribution(
+  getVaccineDistribution(
+    location: Location
+  ): Promise<Array<VaccineTypeDistributionByProvince>>;
+
+  getDetailedVaccineDistribution(
     location: Location
   ): Promise<Array<VaccineTypeDistributionByProvince>>;
 
   getTotalVaccinesApplicated(location: Location): Promise<Number>;
 
   getApplicationConditionsByAgeGroup(
+    age_group: string | undefined
+  ): Promise<Array<ApplicationConditionsByAgeGroup>>;
+
+  getApplicationConditionsByAgeGroupFrom(
     location: Location,
     age_group: string | undefined
   ): Promise<Array<ApplicationConditionsByAgeGroup>>;
@@ -27,7 +35,7 @@ export interface VaccineApplicationsRepository {
     location: Location
   ): Promise<Array<DailyApplicationsSqlResult>>;
 
-  getApplicationsByAgeGroup(location: Location): Promise<Array<any>>;
+  getApplicationsByAgeGroup(age_group: string | undefined): Promise<Array<any>>;
 
   getTotalApplicationsDistributionByVaccine(): Promise<Array<any>>;
 }
@@ -57,33 +65,49 @@ const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
         ' GROUP BY age_group, dose_order, vaccine, sex ORDER BY age_group'
     );
   },
-  async getVaccineTypeDistribution(location: Location) {
+  async getVaccineDistribution(location: Location) {
     return db.many(
-      `SELECT vaccine, COUNT(*) FROM applications_by_place ` +
+      `SELECT vaccine, sum(applications) as applications FROM applications_by_place ` +
         whereLocationStatement(location) +
-        `GROUP BY application_jurisdiction`
+        'GROUP BY vaccine'
+    );
+  },
+  async getDetailedVaccineDistribution(location: Location) {
+    return db.many(
+      `SELECT vaccine, sum(applications) as applications, application_jurisdiction,
+       application_department FROM applications_by_place ` +
+        whereLocationStatement(location) +
+        ' GROUP BY vaccine, application_jurisdiction, application_department'
     );
   },
   async getTotalVaccinesApplicated(location: Location) {
     if (!location.department && !location.province)
       return db.one('SELECT * FROM total_applications');
     return db.one(
-      `SELECT COUNT(*) FROM applications_by_place ` +
+      `SELECT SUM(applications) FROM applications_by_place ` +
         whereLocationStatement(location)
     );
   },
-  async getApplicationConditionsByAgeGroup(
+  async getApplicationConditionsByAgeGroup(age_group: string | undefined) {
+    return db.many(
+      `SELECT age_group, application_condition, SUM(applicationns) FROM applications_conditions_by_place ` +
+        (age_group ? `WHERE age_group = ${age_group}` : '') +
+        'GROUP BY application_condition, age_group'
+    );
+  },
+  async getApplicationConditionsByAgeGroupFrom(
     location: Location,
     age_group: string | undefined
   ) {
     return db.many(
-      `SELECT application_condition, age_group, COUNT(*) FROM applications_by_place ` +
-        +whereLocationStatement(location) +
+      `SELECT age_group, application_condition, SUM(applicationns) FROM applications_conditions_by_place ` +
+        whereLocationStatement(location) +
         (age_group && (location.province || location.department)
           ? `AND age_group = ${age_group}`
           : age_group
           ? `WHERE age_group = ${age_group}`
-          : '')
+          : '') +
+        'GROUP BY application_condition, age_group'
     );
   },
   async getDailyApplications(location: Location) {
@@ -92,11 +116,11 @@ const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
         whereLocationStatement(location)
     );
   },
-  async getApplicationsByAgeGroup(location: Location) {
+  async getApplicationsByAgeGroup(age_group: string | undefined) {
     return db.many(
-      'SELECT sex, COUNT(*) FROM vaccines_by_dose_and_age ' +
-        whereLocationStatement(location) +
-        ' GROUP BY sex'
+      'SELECT age_group, sex, SUM(applications) FROM vaccines_applications_by_dose_and_age ' +
+        ` WHERE age_group = ${age_group}` +
+        ' GROUP BY age_group, sex'
     );
   },
 });

@@ -30,7 +30,7 @@ WITH vaccines_by_dose_and_age AS (
          WHERE age_group != 'S.I.'
          GROUP BY age_group, dose_order, vaccine, sex
      )
-SELECT age_group, vda.dose_order, vda.vaccine, vda.sex, vda.count
+SELECT age_group, vda.dose_order, vda.vaccine, vda.sex, vda.count as applications
 FROM vaccines_by_dose_and_age vda
 ORDER BY age_group)`;
 
@@ -54,7 +54,7 @@ FROM vaccine_applications_by_vaccine,
 
 const dailyApplicationsViewQuery = `CREATE MATERIALIZED VIEW IF NOT EXISTS daily_applications_by_vaccine AS
 (
-SELECT vaccine, application_date, COUNT(*)
+SELECT vaccine, application_date, COUNT(*) as applications
 FROM vaccine_applications
 WHERE application_date IS NOT NULL
 GROUP BY application_date, vaccine
@@ -78,11 +78,12 @@ const applicationsConditionByPlaceViewQuery = `CREATE MATERIALIZED VIEW IF NOT E
 (
 SELECT 
        application_jurisdiction,
+       application_department,
        application_condition,
        age_group,
-       COUNT(*)
+       COUNT(*) as applications
 FROM vaccine_applications
-GROUP BY application_jurisdiction, application_condition, age_group
+GROUP BY application_jurisdiction, application_department, application_condition, age_group
 ORDER BY application_jurisdiction)`;
 
 const materializedViews = [
