@@ -21,6 +21,7 @@ export const syncData = async (db: IDatabase<any>) => {
   if (amountOfRecords[0].count != 0) {
     console.log('deleting entries');
     await db.none('DELETE FROM vaccine_applications');
+    await db.none('DELETE FROM vaccine_receptions');
   }
 
   saveVaccineApplicationsFile(db).then(async () => {
