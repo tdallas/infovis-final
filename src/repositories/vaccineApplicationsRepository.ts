@@ -28,6 +28,8 @@ export interface VaccineApplicationsRepository {
   ): Promise<Array<DailyApplicationsSqlResult>>;
 
   getApplicationsByAgeGroup(location: Location): Promise<Array<any>>;
+
+  getTotalApplicationsDistributionByVaccine(): Promise<Array<any>>;
 }
 
 const whereLocationStatement = (location: Location) => {
@@ -45,6 +47,9 @@ const whereLocationStatement = (location: Location) => {
 };
 
 const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
+  async getTotalApplicationsDistributionByVaccine() {
+    return db.many('SELECT * FROM total_applications_by_vaccine_and_dose');
+  },
   async getDoseDistributionByAgeGroup(location: Location) {
     return db.many(
       'SELECT * FROM applications_by_place ' + whereLocationStatement(location)
@@ -58,6 +63,8 @@ const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
     );
   },
   async getTotalVaccinesApplicated(location: Location) {
+    if (!location.department && !location.province)
+      return db.one('SELECT * FROM total_applications');
     return db.one(
       `SELECT COUNT(*) FROM applications_by_place ` +
         whereLocationStatement(location)
@@ -78,11 +85,16 @@ const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
     );
   },
   async getDailyApplications(location: Location) {
-    return db.many('SELECT * FROM daily_applications_by_vaccine');
+    return db.many(
+      'SELECT * FROM daily_applications_by_vaccine' +
+        whereLocationStatement(location)
+    );
   },
   async getApplicationsByAgeGroup(location: Location) {
     return db.many(
-      'SELECT sex, COUNT(*) FROM vaccines_by_dose_and_age GROUP BY sex'
+      'SELECT sex, COUNT(*) FROM vaccines_by_dose_and_age ' +
+        whereLocationStatement(location) +
+        ' GROUP BY sex'
     );
   },
 });
