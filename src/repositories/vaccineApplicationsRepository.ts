@@ -52,7 +52,9 @@ const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
   },
   async getDoseDistributionByAgeGroup(location: Location) {
     return db.many(
-      'SELECT * FROM applications_by_place ' + whereLocationStatement(location)
+      'SELECT age_group, dose_order, vaccine, sex, sum(applications) as applications FROM applications_by_place ' +
+        whereLocationStatement(location) +
+        ' GROUP BY age_group, dose_order, vaccine, sex ORDER BY age_group'
     );
   },
   async getVaccineTypeDistribution(location: Location) {

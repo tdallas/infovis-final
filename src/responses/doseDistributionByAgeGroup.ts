@@ -3,8 +3,14 @@ export interface DoseDistributionByAgeGroupSqlResult {
   age_group: string;
   dose_order: string;
   sex: string;
-  count: Number;
+  applications: Number;
 }
+
+const getSex = (sex: string) => {
+  if (sex === 'F') return 'Femenino';
+  if (sex === 'M') return 'Masculino';
+  return 'Sin identificar';
+};
 
 export class DoseDistributionByAgeGroup {
   public vaccine: string;
@@ -15,9 +21,12 @@ export class DoseDistributionByAgeGroup {
 
   constructor(result: DoseDistributionByAgeGroupSqlResult) {
     this.vaccine = result.vaccine;
-    this.ageGroup = result.age_group + ' años';
+    this.ageGroup =
+      result.age_group !== 'S.I.'
+        ? result.age_group + ' años'
+        : result.age_group;
     this.doseOrder = 'Dosis nro ' + String(result.dose_order);
-    this.sex = result.sex;
-    this.applications = Number(result.count);
+    this.sex = getSex(result.sex);
+    this.applications = Number(result.applications);
   }
 }

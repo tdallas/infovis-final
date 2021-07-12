@@ -67,9 +67,11 @@ SELECT age_group,
        application_department,
        application_jurisdiction,
        vaccine,
-       COUNT(*)
+       sex,
+       COUNT(*) as applications
 FROM vaccine_applications
-GROUP BY age_group, dose_order, application_department, application_jurisdiction, vaccine
+WHERE age_group != 'S.I.'
+GROUP BY age_group, dose_order, application_department, application_jurisdiction, vaccine, sex
 ORDER BY age_group)`;
 
 const applicationsConditionByPlaceViewQuery = `CREATE MATERIALIZED VIEW IF NOT EXISTS applications_conditions_by_place AS
