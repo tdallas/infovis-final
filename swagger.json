@@ -38,11 +38,137 @@
         }
       }
     },
-    "/last_update": {},
-    "/vaccines_count": {},
-    "/vaccines_daily": {},
-    "/applications_condition": {},
-    "/applications_sex": {},
-    "/vaccines_distribution_details": {}
+    "/last_update": {
+      "get": {
+        "summary": "",
+        "description": "",
+        "parameters": {},
+        "responses": {
+          "200": {
+            "description": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vaccines_count": {
+      "get": {
+        "summary": "",
+        "description": "",
+        "parameters": {},
+        "responses": {
+          "200": {
+            "description": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vaccines_daily": {
+      "get": {
+        "summary": "",
+        "description": "",
+        "parameters": {},
+        "responses": {
+          "200": {
+            "description": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applications_condition": {
+      "get": {
+        "summary": "",
+        "description": "",
+        "parameters": {},
+        "responses": {
+          "200": {
+            "description": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applications_sex": {
+      "get": {
+        "summary": "",
+        "description": "",
+        "parameters": {},
+        "responses": {
+          "200": {
+            "description": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/vaccines_distribution_details": {
+      "get": {
+        "summary": "",
+        "description": "",
+        "parameters": {},
+        "responses": {
+          "200": {
+            "description": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
   }
 }
