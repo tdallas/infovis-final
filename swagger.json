@@ -64,7 +64,24 @@
       "get": {
         "summary": "Returns the total vaccines applicated by vaccine, group by: province and city, or country",
         "description": "",
-        "parameters": {},
+        "parameters": [
+          {
+            "in": "query",
+            "name": "province",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "city",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": {},
@@ -84,9 +101,44 @@
     },
     "/vaccines_daily": {
       "get": {
-        "summary": "Returns the applications of vaccines by day, group by: province and city, or country",
-        "description": "",
-        "parameters": {},
+        "summary": "Returns the applications of vaccines by day within an interval, group by: province and city, or country",
+        "description": "Returns the applications of vaccines by day within an interval, if the interval is not specified, then it returns all days. If a province or city is not specified, then the whole country is returned. If a city is not specified and there is a province, then it returns the details for that province and all cities that belong to that province.",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "province",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "city",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "from_date",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          },
+          {
+            "in": "query",
+            "name": "to_date",
+            "required": false,
+            "schema": {
+              "type": "string",
+              "format": "date"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": {},
@@ -108,7 +160,24 @@
       "get": {
         "summary": "Returns the application conditions by age group, group by: province and city, or country ",
         "description": "",
-        "parameters": {},
+        "parameters": [
+          {
+            "in": "query",
+            "name": "province",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "city",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": {},
@@ -130,7 +199,24 @@
       "get": {
         "summary": "Returns the applications count by sex and dose, group by: province and city, or country",
         "description": "",
-        "parameters": {},
+        "parameters": [
+          {
+            "in": "query",
+            "name": "province",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "city",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": {},
@@ -150,9 +236,26 @@
     },
     "/vaccines_distribution_details": {
       "get": {
-        "summary": "Returns the details of the vaccines distribution group by province and city",
+        "summary": "Returns the details of the vaccines distribution, group by: province and city or country",
         "description": "",
-        "parameters": {},
+        "parameters": [
+          {
+            "in": "query",
+            "name": "province",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "city",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": {},
@@ -174,7 +277,24 @@
       "get": {
         "summary": "Returns the total applications and distribution per interval of vaccine receptions",
         "description": "",
-        "parameters": {},
+        "parameters": [
+          {
+            "in": "query",
+            "name": "province",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "city",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": {},
