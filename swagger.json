@@ -18,7 +18,7 @@
   "paths": {
     "/count": {
       "get": {
-        "summary": "",
+        "summary": "Returns the total vaccines applicated, group by: province and city, or country",
         "description": "",
         "parameters": {},
         "responses": {
@@ -40,7 +40,7 @@
     },
     "/last_update": {
       "get": {
-        "summary": "",
+        "summary": "Returns the last update of datasets",
         "description": "",
         "parameters": {},
         "responses": {
@@ -62,7 +62,7 @@
     },
     "/vaccines_count": {
       "get": {
-        "summary": "",
+        "summary": "Returns the total vaccines applicated by vaccine, group by: province and city, or country",
         "description": "",
         "parameters": {},
         "responses": {
@@ -84,7 +84,7 @@
     },
     "/vaccines_daily": {
       "get": {
-        "summary": "",
+        "summary": "Returns the applications of vaccines by day, group by: province and city, or country",
         "description": "",
         "parameters": {},
         "responses": {
@@ -104,9 +104,9 @@
         }
       }
     },
-    "/applications_condition": {
+    "/application_conditions": {
       "get": {
-        "summary": "",
+        "summary": "Returns the application conditions by age group, group by: province and city, or country ",
         "description": "",
         "parameters": {},
         "responses": {
@@ -126,9 +126,9 @@
         }
       }
     },
-    "/applications_sex": {
+    "/applications_sex_dose": {
       "get": {
-        "summary": "",
+        "summary": "Returns the applications count by sex and dose, group by: province and city, or country",
         "description": "",
         "parameters": {},
         "responses": {
@@ -150,7 +150,29 @@
     },
     "/vaccines_distribution_details": {
       "get": {
-        "summary": "",
+        "summary": "Returns the details of the vaccines distribution group by province and city",
+        "description": "",
+        "parameters": {},
+        "responses": {
+          "200": {
+            "description": {},
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/applications_vs_distribution": {
+      "get": {
+        "summary": "Returns the total applications and distribution per interval of vaccine receptions",
         "description": "",
         "parameters": {},
         "responses": {
