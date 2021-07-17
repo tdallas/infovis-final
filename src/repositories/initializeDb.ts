@@ -1,4 +1,4 @@
-const createTablesQuery = `CREATE TABLE IF NOT EXISTS vaccine_applications(
+const createVaccineApplicationsQuery = `CREATE TABLE IF NOT EXISTS vaccine_applications(
   id SERIAL PRIMARY KEY,
   sex varchar(50),
   age_group varchar(100),
@@ -15,6 +15,9 @@ const createTablesQuery = `CREATE TABLE IF NOT EXISTS vaccine_applications(
   application_condition varchar(150),
   dose_order integer,
   vaccine_lot varchar(150))`;
+
+const createVaccineReceptionsTableQuery =
+  'CREATE TABLE IF NOT EXISTS vaccine_receptions(id SERIAL PRIMARY KEY, reception_date date, dosis_received integer)';
 
 const getDoseDistributionCountVieQuery = `CREATE MATERIALIZED VIEW IF NOT EXISTS dose_count AS (
   SELECT dose_order, COUNT(*) AS totalByDose
@@ -102,7 +105,8 @@ export const refreshViewsQueries = () =>
   materializedViews.map((view) => refreshMatView(view));
 
 export default [
-  createTablesQuery,
+  createVaccineApplicationsQuery,
+  createVaccineReceptionsTableQuery,
   getDoseDistributionByAgeGroupViewQuery,
   totalApplicationsViewQuery,
   totalApplicationsByVaccineAndDoseViewQuery,

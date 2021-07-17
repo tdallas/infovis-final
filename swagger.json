@@ -20,17 +20,32 @@
       "get": {
         "summary": "Returns the total vaccines applicated, group by: province and city, or country",
         "description": "",
-        "parameters": {},
+        "parameters": [
+          {
+            "in": "query",
+            "name": "province",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "city",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": {},
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
+                  "type": "object",
+                  "$ref": "#/components/schemas/CountResponse"
                 }
               }
             }
@@ -51,7 +66,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "$ref": "#/components/schemas/LastUpdateResponse"
                   }
                 }
               }
@@ -90,7 +105,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "$ref": "#/components/schemas/VaccinesCountResponse"
                   }
                 }
               }
@@ -147,7 +162,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "$ref": "#/components/schemas/VaccinesDailyResponse"
                   }
                 }
               }
@@ -176,6 +191,14 @@
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "in": "query",
+            "name": "age_group",
+            "required": false,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
@@ -186,7 +209,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "$ref": "#/components/schemas/ApplicationConditionsResponse"
                   }
                 }
               }
@@ -225,7 +248,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "$ref": "#/components/schemas/ApplicationSexDoseResponse"
                   }
                 }
               }
@@ -234,46 +257,7 @@
         }
       }
     },
-    "/vaccines_distribution_details": {
-      "get": {
-        "summary": "Returns the details of the vaccines distribution, group by: province and city or country",
-        "description": "",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "province",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "city",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": {},
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/applications_vs_distribution": {
+    "/application_vs_distribution": {
       "get": {
         "summary": "Returns the total applications and distribution per interval of vaccine receptions",
         "description": "",
@@ -303,12 +287,75 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "$ref": "#/components/schemas/ApplicationVsDistributionResponse"
                   }
                 }
               }
             }
           }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "CountResponse": {
+        "type": "number"
+      },
+      "LastUpdateReponse": {
+        "type": "string",
+        "format": "date"
+      },
+      "VaccinesCountResponse": {
+        "type": "object",
+        "properties": {
+          "vaccine": {},
+          "dose": {},
+          "sex": {},
+          "count": {},
+          "province": {},
+          "city": {}
+        }
+      },
+      "VaccinesDailyResponse": {
+        "type": "object",
+        "properties": {
+          "vaccine": {},
+          "dose": {},
+          "sex": {},
+          "count": {},
+          "province": {},
+          "city": {},
+          "application_date": {}
+        }
+      },
+      "ApplicationConditionsResponse": {
+        "type": "object",
+        "properties": {
+          "application_condition": {},
+          "sex": {},
+          "count": {},
+          "province": {},
+          "city": {}
+        }
+      },
+      "ApplicationSexDoseResponse": {
+        "type": "object",
+        "properties": {
+          "vaccine": {},
+          "dose": {},
+          "sex": {},
+          "count": {},
+          "province": {},
+          "city": {}
+        }
+      },
+      "ApplicationVsDistributionResponse": {
+        "type": "object",
+        "properties": {
+          "applicationsCount": {},
+          "distributionCount": {},
+          "date": {}
         }
       }
     }

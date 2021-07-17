@@ -11,7 +11,7 @@ export const saveVaccineApplicationsFile = async (db: any): Promise<any> => {
     url: process.env.VACCINE_APPLICATIONS_URL,
     method: 'GET',
     responseType: 'arraybuffer',
-    timeout: 40000,
+    // timeout: 40000,
   })
     .then(async (response: any) => {
       console.log('escribiendo archivo');
