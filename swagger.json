@@ -40,7 +40,7 @@
         ],
         "responses": {
           "200": {
-            "description": {},
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -57,17 +57,14 @@
       "get": {
         "summary": "Returns the last update of datasets",
         "description": "",
-        "parameters": {},
         "responses": {
           "200": {
-            "description": {},
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/LastUpdateResponse"
-                  }
+                  "type": "object",
+                  "$ref": "#/components/schemas/LastUpdateResponse"
                 }
               }
             }
@@ -99,7 +96,7 @@
         ],
         "responses": {
           "200": {
-            "description": {},
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -156,7 +153,7 @@
         ],
         "responses": {
           "200": {
-            "description": {},
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -203,7 +200,7 @@
         ],
         "responses": {
           "200": {
-            "description": {},
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -242,7 +239,7 @@
         ],
         "responses": {
           "200": {
-            "description": {},
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -281,7 +278,7 @@
         ],
         "responses": {
           "200": {
-            "description": {},
+            "description": "",
             "content": {
               "application/json": {
                 "schema": {
@@ -302,60 +299,95 @@
       "CountResponse": {
         "type": "number"
       },
-      "LastUpdateReponse": {
+      "LastUpdateResponse": {
         "type": "string",
         "format": "date"
       },
       "VaccinesCountResponse": {
         "type": "object",
         "properties": {
-          "vaccine": {},
-          "dose": {},
-          "sex": {},
-          "count": {},
-          "province": {},
-          "city": {}
+          "vaccine": {
+            "type": "string"
+          },
+          "dose": {
+            "type": "integer"
+          },
+          "sex": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "province": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          }
         }
       },
       "VaccinesDailyResponse": {
         "type": "object",
         "properties": {
-          "vaccine": {},
-          "dose": {},
-          "sex": {},
-          "count": {},
-          "province": {},
-          "city": {},
-          "application_date": {}
+          "vaccine": {
+            "type": "string"
+          },
+          "dose": {
+            "type": "integer"
+          },
+          "sex": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "province": {
+            "type": "string"
+          },
+          "city": {
+            "type": "string"
+          },
+          "application_date": {
+            "type": "string",
+            "format": "date"
+          }
         }
       },
       "ApplicationConditionsResponse": {
         "type": "object",
         "properties": {
-          "application_condition": {},
-          "sex": {},
-          "count": {},
-          "province": {},
-          "city": {}
+          "application_condition": {
+            "type": "string"
+          },
+          "sex": {
+            "type": "string"
+          },
+          "count": {
+            "type": "integer"
+          },
+          "province": { "type": "string" },
+          "city": {
+            "type": "string"
+          }
         }
       },
       "ApplicationSexDoseResponse": {
         "type": "object",
         "properties": {
-          "vaccine": {},
-          "dose": {},
-          "sex": {},
-          "count": {},
-          "province": {},
-          "city": {}
+          "vaccine": { "type": "string" },
+          "dose": { "type": "integer" },
+          "sex": { "type": "string" },
+          "count": { "type": "integer" },
+          "province": { "type": "string" },
+          "city": { "type": "string" }
         }
       },
       "ApplicationVsDistributionResponse": {
         "type": "object",
         "properties": {
-          "applicationsCount": {},
-          "distributionCount": {},
-          "date": {}
+          "applications_count": { "type": "integer" },
+          "distribution_count": { "type": "integer" },
+          "date": { "type": "string", "format": "date" }
         }
       }
     }
