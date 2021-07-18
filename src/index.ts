@@ -35,7 +35,7 @@ const start = async (db: IDatabase<any>) => {
 
   app.listen(PORT, async () => {
     console.log(`⚡️[server]: Server is running at https://localhost:${PORT}`);
-    await syncData(db);
+    // await syncData(db);
   });
 };
 

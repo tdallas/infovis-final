@@ -72,7 +72,7 @@
         }
       }
     },
-    "/vaccines_count": {
+    "/vaccines_detail_count": {
       "get": {
         "summary": "Returns the total vaccines applicated by vaccine, group by: province and city, or country",
         "description": "",
@@ -102,7 +102,7 @@
                 "schema": {
                   "type": "array",
                   "items": {
-                    "$ref": "#/components/schemas/VaccinesCountResponse"
+                    "$ref": "#/components/schemas/VaccinesDetailCountResponse"
                   }
                 }
               }
@@ -303,14 +303,15 @@
         "type": "string",
         "format": "date"
       },
-      "VaccinesCountResponse": {
+      "VaccinesDetailCountResponse": {
         "type": "object",
         "properties": {
           "vaccine": {
             "type": "string"
           },
           "dose": {
-            "type": "integer"
+            "type": "integer",
+            "enum": [1, 2]
           },
           "sex": {
             "type": "string"
@@ -333,7 +334,8 @@
             "type": "string"
           },
           "dose": {
-            "type": "integer"
+            "type": "integer",
+            "enum": [1, 2]
           },
           "sex": {
             "type": "string"
@@ -375,7 +377,7 @@
         "type": "object",
         "properties": {
           "vaccine": { "type": "string" },
-          "dose": { "type": "integer" },
+          "dose": { "type": "integer", "enum": [1, 2] },
           "sex": { "type": "string" },
           "count": { "type": "integer" },
           "province": { "type": "string" },
