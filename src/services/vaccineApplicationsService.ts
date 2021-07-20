@@ -1,13 +1,13 @@
 import { VaccineApplicationsRepository } from '../repositories/vaccineApplicationsRepository';
+import { ApplicationConditionsResponse } from '../responses/applicationConditionsResponse';
+import { ApplicationSexDoseResponse } from '../responses/applicationSexDoseResponse';
 import {
-  VaccineTypeDistributionByProvince,
-  ApplicationConditionsByAgeGroup,
-} from '../repositories/vaccineApplicationsRepository';
-import {
-  DailyApplications,
-  DailyApplicationsSqlResult,
-} from '../responses/dailyApplications';
-import { DoseDistributionByAgeGroup } from '../responses/doseDistributionByAgeGroup';
+  ApplicationVsDistributionResponse,
+  ApplicationVsDistributionSqlResult,
+} from '../responses/applicationVsDistributionResponse';
+import { VaccinesDailyResponse } from '../responses/vaccinesDailyResponse';
+import { VaccinesDetailByVaccineAndDoseResponse } from '../responses/vaccinesDetailByVaccineAndDoseResponse';
+import { VaccinesDetailCountResponse } from '../responses/vaccinesDetailCountResponse';
 
 export interface Location {
   province: string | undefined;
@@ -15,60 +15,66 @@ export interface Location {
 }
 
 export interface VaccineApplicationsService {
-  getDoseDistributionByAgeGroup(
-    location?: Location
-  ): Promise<Array<DoseDistributionByAgeGroup>>;
-
-  // if no province is supplied, look for whole country
   getVaccineDistribution(
-    location?: Location
-  ): Promise<Array<VaccineTypeDistributionByProvince>>;
+    location: Location
+  ): Promise<Array<VaccinesDetailByVaccineAndDoseResponse>>;
 
-  // if no province is supplied, look for whole country
-  getTotalVaccinesApplicated(location?: Location): Promise<Number>;
+  getDetailedVaccineDistribution(
+    location: Location
+  ): Promise<Array<VaccinesDetailCountResponse>>;
 
-  getApplicationConditionsByAgeGroup(
-    location?: Location
-  ): Promise<Array<ApplicationConditionsByAgeGroup>>;
+  getTotalVaccinesApplicated(location: Location): Promise<Number>;
 
-  getDailyApplications(location?: Location): Promise<Array<DailyApplications>>;
+  getApplicationConditionsByAgeGroupFrom(
+    location: Location,
+    age_group: string | undefined
+  ): Promise<Array<ApplicationConditionsResponse>>;
+
+  getDailyApplications(
+    location: Location,
+    from_date: Date,
+    to_date: Date
+  ): Promise<Array<VaccinesDailyResponse>>;
+
+  getVaccinesBySexAndDose(
+    location: Location
+  ): Promise<Array<ApplicationSexDoseResponse>>;
+
+  getApplicationsVsDistribution(): Promise<
+    Array<ApplicationVsDistributionResponse>
+  >;
 }
 
 const configure = (
   vaccineApplicationsRepository: VaccineApplicationsRepository
 ): VaccineApplicationsService => ({
-  async getDoseDistributionByAgeGroup(location?: Location) {
-    return vaccineApplicationsRepository
-      .getDoseDistributionByAgeGroup(
-        location || { province: undefined, city: undefined }
-      )
-      .then((response) => {
-        return response.map((each) => new DoseDistributionByAgeGroup(each));
-      })
-      .catch((error) => {
-        return [];
-      });
-  },
-  async getVaccineDistribution(location?: Location) {
+  async getVaccineDistribution(location: Location) {
     return [];
   },
-  async getTotalVaccinesApplicated(location?: Location) {
+  async getDetailedVaccineDistribution(location: Location) {
+    return [];
+  },
+  async getTotalVaccinesApplicated(location: Location) {
     return 0;
   },
-  async getApplicationConditionsByAgeGroup(location?: Location) {
+  async getApplicationConditionsByAgeGroupFrom(
+    location: Location,
+    age_group: string | undefined
+  ) {
     return [];
   },
-  async getDailyApplications(location?: Location) {
-    return vaccineApplicationsRepository
-      .getDailyApplications(
-        location || { province: undefined, city: undefined }
-      )
-      .then((response: Array<DailyApplicationsSqlResult>) => {
-        return response.map((each) => new DailyApplications(each));
-      })
-      .catch((error) => {
-        return [];
-      });
+  async getDailyApplications(
+    location: Location,
+    from_date: Date,
+    to_date: Date
+  ) {
+    return [];
+  },
+  async getVaccinesBySexAndDose(location: Location) {
+    return [];
+  },
+  async getApplicationsVsDistribution() {
+    return [];
   },
 });
 

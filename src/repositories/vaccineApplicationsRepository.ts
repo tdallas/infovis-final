@@ -24,7 +24,9 @@ export interface VaccineApplicationsRepository {
   ): Promise<Array<ApplicationConditionsSqlResult>>;
 
   getDailyApplications(
-    location: Location
+    location: Location,
+    from_date: Date | undefined,
+    to_date: Date | undefined
   ): Promise<Array<DailyApplicationsSqlResult>>;
 
   getVaccinesBySexAndDose(
@@ -100,10 +102,18 @@ const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
             }`
     );
   },
-  async getDailyApplications(location: Location) {
+  async getDailyApplications(
+    location: Location,
+    from_date: Date | undefined,
+    to_date: Date | undefined
+  ) {
+    const locationCondition = location.province || location.city;
     return db.many(
       'SELECT * FROM daily_applications_by_vaccine' +
-        whereLocationStatement(location)
+        whereLocationStatement(location) +
+        `${locationCondition ? ' WHERE ' : ' AND '}` +
+        `${from_date ? `application_date >= ${from_date}` : ''}` +
+        `${to_date ? `application_date <= ${to_date}` : ''}`
     );
   },
   async getApplicationsVsDistribution() {
