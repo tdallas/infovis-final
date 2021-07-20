@@ -49,32 +49,84 @@ const configure = (
   vaccineApplicationsRepository: VaccineApplicationsRepository
 ): VaccineApplicationsService => ({
   async getVaccineDistribution(location: Location) {
-    return [];
+    return vaccineApplicationsRepository
+      .getVaccineDistribution(location)
+      .then((result) =>
+        result.map((each) => new VaccinesDetailByVaccineAndDoseResponse(each))
+      )
+      .catch((error) => {
+        console.log('error in getVaccineDistribution');
+        return error;
+      });
   },
   async getDetailedVaccineDistribution(location: Location) {
-    return [];
+    return vaccineApplicationsRepository
+      .getDetailedVaccineDistribution(location)
+      .then((result) =>
+        result.map((each) => new VaccinesDetailCountResponse(each))
+      )
+      .catch((error) => {
+        console.log('error in getDetailedVaccineDistribution');
+        return error;
+      });
   },
   async getTotalVaccinesApplicated(location: Location) {
-    return 0;
+    return vaccineApplicationsRepository
+      .getTotalVaccinesApplicated(location)
+      .then((result) => result)
+      .catch((error) => {
+        console.log('error in getTotalVaccinesApplicated');
+        return error;
+      });
   },
   async getApplicationConditionsByAgeGroupFrom(
     location: Location,
     age_group: string | undefined
   ) {
-    return [];
+    return vaccineApplicationsRepository
+      .getApplicationConditionsByAgeGroupFrom(location, age_group)
+      .then((result) =>
+        result.map((each) => new ApplicationConditionsResponse(each))
+      )
+      .catch((error) => {
+        console.log('error in getApplicationConditionsByAgeGroupFrom');
+        return error;
+      });
   },
   async getDailyApplications(
     location: Location,
     from_date: Date,
     to_date: Date
   ) {
-    return [];
+    return vaccineApplicationsRepository
+      .getDailyApplications(location, from_date, to_date)
+      .then((result) => result.map((each) => new VaccinesDailyResponse(each)))
+      .catch((error) => {
+        console.log('error in getDailyApplications');
+        return error;
+      });
   },
   async getVaccinesBySexAndDose(location: Location) {
-    return [];
+    return vaccineApplicationsRepository
+      .getVaccinesBySexAndDose(location)
+      .then((result) =>
+        result.map((each) => new ApplicationSexDoseResponse(each))
+      )
+      .catch((error) => {
+        console.log('error in getVaccinesBySexAndDose');
+        return error;
+      });
   },
   async getApplicationsVsDistribution() {
-    return [];
+    return vaccineApplicationsRepository
+      .getApplicationsVsDistribution()
+      .then((result) =>
+        result.map((each) => new ApplicationVsDistributionResponse(each))
+      )
+      .catch((error) => {
+        console.log('error in getApplicationsVsDistribution');
+        return error;
+      });
   },
 });
 
