@@ -21,4 +21,9 @@ CREATE TABLE vaccine_receptions(
     id SERIAL PRIMARY KEY,
     reception_date date,
     dosis_received integer
-)
+);
+
+CREATE TABLE last_update(
+    id SERIAL PRIMARY KEY,
+    last_update date
+);

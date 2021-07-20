@@ -1,15 +1,15 @@
-export interface VaccinesDistributionSqlResult {
+export interface VaccinesDetailByVaccineAndDoseSqlResult {
   vaccine: string;
   dose: Number;
   count: Number;
 }
 
-export class VaccinesDistributionResponse {
+export class VaccinesDetailByVaccineAndDoseResponse {
   public vaccine: string;
   public dose: Number;
   public count: Number;
 
-  constructor(result: VaccinesDistributionSqlResult) {
+  constructor(result: VaccinesDetailByVaccineAndDoseSqlResult) {
     this.vaccine = result.vaccine;
     this.dose = result.dose;
     this.count = result.count;

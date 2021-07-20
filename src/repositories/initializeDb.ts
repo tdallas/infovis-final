@@ -19,6 +19,9 @@ const createVaccineApplicationsQuery = `CREATE TABLE IF NOT EXISTS vaccine_appli
 const createVaccineReceptionsTableQuery =
   'CREATE TABLE IF NOT EXISTS vaccine_receptions(id SERIAL PRIMARY KEY, reception_date date, dosis_received integer)';
 
+const createLastUpdateTableQuery =
+  'CREATE TABLE IF NOT EXISTS last_update(id SERIAL PRIMARY KEY, last_update date)';
+
 const getDoseDistributionCountVieQuery = `CREATE MATERIALIZED VIEW IF NOT EXISTS dose_count AS (
   SELECT dose_order, COUNT(*) AS totalByDose
                                 FROM vaccine_applications
@@ -90,8 +93,13 @@ FROM vaccine_applications
 GROUP BY application_jurisdiction, application_department, application_condition, age_group, sex
 ORDER BY application_jurisdiction)`;
 
+const totalReceptionsViewQuery = `CREATE MATERIALIZED VIEW IF NOT EXISTS total_receptions AS (
+  SELECT SUM(dosis_received) as dosis_received FROM vaccine_receptions
+)`;
+
 const materializedViews = [
   'total_applications',
+  'total_receptions',
   'total_applications_by_vaccine_and_dose',
   'vaccines_applications_by_dose_and_age',
   'dose_count',
@@ -106,6 +114,7 @@ export const refreshViewsQueries = () =>
   materializedViews.map((view) => refreshMatView(view));
 
 export default [
+  createLastUpdateTableQuery,
   createVaccineApplicationsQuery,
   createVaccineReceptionsTableQuery,
   getDoseDistributionByAgeGroupViewQuery,
@@ -115,4 +124,5 @@ export default [
   dailyApplicationsViewQuery,
   applicationByPlaceViewQuery,
   applicationsConditionByPlaceViewQuery,
+  totalReceptionsViewQuery,
 ];

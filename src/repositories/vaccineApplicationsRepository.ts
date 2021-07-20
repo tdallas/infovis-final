@@ -1,15 +1,16 @@
 import { IDatabase } from 'pg-promise';
 import { ApplicationConditionsSqlResult } from '../responses/applicationConditionsResponse';
 import { ApplicationSexDoseSqlResult } from '../responses/applicationSexDoseResponse';
+import { ApplicationVsDistributionSqlResult } from '../responses/applicationVsDistributionResponse';
 import { DailyApplicationsSqlResult } from '../responses/dailyApplications';
+import { VaccinesDetailByVaccineAndDoseSqlResult } from '../responses/vaccinesDetailByVaccineAndDoseResponse';
 import { VaccinesDetailCountSqlResult } from '../responses/vaccinesDetailCountResponse';
-import { VaccinesDistributionSqlResult } from '../responses/vaccinesDistributionResponse';
 import { Location } from '../services/vaccineApplicationsService';
 
 export interface VaccineApplicationsRepository {
   getVaccineDistribution(
     location: Location
-  ): Promise<Array<VaccinesDistributionSqlResult>>;
+  ): Promise<Array<VaccinesDetailByVaccineAndDoseSqlResult>>;
 
   getDetailedVaccineDistribution(
     location: Location
@@ -25,6 +26,14 @@ export interface VaccineApplicationsRepository {
   getDailyApplications(
     location: Location
   ): Promise<Array<DailyApplicationsSqlResult>>;
+
+  getVaccinesBySexAndDose(
+    location: Location
+  ): Promise<Array<ApplicationSexDoseSqlResult>>;
+
+  getApplicationsVsDistribution(): Promise<
+    Array<ApplicationVsDistributionSqlResult>
+  >;
 }
 
 const whereLocationStatement = (location: Location) => {
@@ -43,6 +52,8 @@ const whereLocationStatement = (location: Location) => {
 
 const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
   async getVaccineDistribution(location: Location) {
+    const locationCondition = location.province || location.city;
+
     return db.many(
       `SELECT vaccine, sum(applications) as applications FROM applications_by_place ` +
         whereLocationStatement(location) +
@@ -50,9 +61,14 @@ const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
     );
   },
   async getDetailedVaccineDistribution(location: Location) {
+    const locationCondition = location.province || location.city;
     return db.many(
-      `SELECT vaccine, sum(applications) as count, application_jurisdiction,
-       application_department, age_group, sex, dose_order as dose FROM applications_by_place ` +
+      `SELECT vaccine, SUM(applications) as count, ${
+        locationCondition
+          ? `application_jurisdiction as province,
+       application_department as city,`
+          : ''
+      } age_group, sex, dose_order as dose FROM applications_by_place ` +
         whereLocationStatement(location) +
         ' GROUP BY vaccine, application_jurisdiction, application_department, age_group, sex, dose_order'
     );
@@ -88,6 +104,22 @@ const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
     return db.many(
       'SELECT * FROM daily_applications_by_vaccine' +
         whereLocationStatement(location)
+    );
+  },
+  async getApplicationsVsDistribution() {
+    return db.many(
+      'SELECT dosis_received, totalApplications as vaccines_count FROM total_applications, total_receptions'
+    );
+  },
+  async getVaccinesBySexAndDose(location: Location) {
+    const locationCondition = location.province || location.city;
+    return db.many(
+      `SELECT vaccine, dose_order AS dose, sex, SUM(applications), 
+        ${
+          locationCondition
+            ? `application_jurisdiction AS province, application_department AS city`
+            : ''
+        } FROM applications_by_place` + whereLocationStatement(location)
     );
   },
 });

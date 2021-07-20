@@ -1,9 +1,14 @@
+export interface ApplicationVsDistributionSqlResult {
+  applications_count: Number;
+  dosis_received: Number;
+}
+
 export class ApplicationVsDistributionResponse {
   public applications_count: Number;
-  public distribution_count: Number;
+  public dosis_received: Number;
 
-  constructor(result) {
+  constructor(result: ApplicationVsDistributionSqlResult) {
     this.applications_count = result.applications_count;
-    this.distribution_count = result.distribution_count;
+    this.dosis_received = result.dosis_received;
   }
 }
