@@ -12,17 +12,18 @@ export interface DailyApplicationsRequest {
 
 interface WithLocationAndAgeGroup {
   province: string | undefined;
-  department: string | undefined;
-  ageGroup: string | undefined;
+  city: string | undefined;
+  age_group: string | undefined;
 }
 
 interface WithLocationAndDateInterval {
   province: string | undefined;
-  department: string | undefined;
-  from_: string | undefined;
+  city: string | undefined;
+  from_date: string | undefined;
+  to_date: string | undefined;
 }
 
 interface WithLocation {
   province: string | undefined;
-  department: string | undefined;
+  city: string | undefined;
 }
