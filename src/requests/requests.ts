@@ -19,8 +19,8 @@ interface WithLocationAndAgeGroup {
 interface WithLocationAndDateInterval {
   province: string | undefined;
   city: string | undefined;
-  from_date: string | undefined;
-  to_date: string | undefined;
+  from_date: Date | undefined;
+  to_date: Date | undefined;
 }
 
 interface WithLocation {

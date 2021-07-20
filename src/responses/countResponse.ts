@@ -1,7 +1,10 @@
+export interface CountResultSql {
+  totalapplications: Number;
+}
 export class CountResponse {
   public count: Number;
 
-  constructor(count: Number) {
-    this.count = count;
+  constructor(result: CountResultSql) {
+    this.count = result.totalapplications;
   }
 }

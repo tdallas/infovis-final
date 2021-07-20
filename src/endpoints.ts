@@ -14,10 +14,11 @@ const registerVaccineApplicationsEndpoints = (app: any, services: Services) => {
 
   app.get('/count', async (req: ByLocationRequest, res: any) => {
     const { province, city } = req.query;
-    const response = vaccineApplicationsService.getTotalVaccinesApplicated({
-      province,
-      city,
-    });
+    const response =
+      await vaccineApplicationsService.getTotalVaccinesApplicated({
+        province,
+        city,
+      });
     res.send(response);
   });
 
@@ -28,7 +29,7 @@ const registerVaccineApplicationsEndpoints = (app: any, services: Services) => {
     async (req: ByLocationRequest, res: any) => {
       const { province, city } = req.query;
       const response =
-        vaccineApplicationsService.getDetailedVaccineDistribution({
+        await vaccineApplicationsService.getDetailedVaccineDistribution({
           province,
           city,
         });
@@ -40,13 +41,13 @@ const registerVaccineApplicationsEndpoints = (app: any, services: Services) => {
     '/vaccines_daily',
     async (req: DailyApplicationsRequest, res: any) => {
       const { province, city, from_date, to_date } = req.query;
-      const response = vaccineApplicationsService.getDailyApplications(
+      const response = await vaccineApplicationsService.getDailyApplications(
         {
           province,
           city,
         },
-        new Date(from_date || ''),
-        new Date(to_date || '')
+        from_date,
+        to_date
       );
       res.send(response);
     }
@@ -57,7 +58,7 @@ const registerVaccineApplicationsEndpoints = (app: any, services: Services) => {
     async (req: ApplicationsByAgeGroupRequest, res: any) => {
       const { province, city, age_group } = req.query;
       const response =
-        vaccineApplicationsService.getApplicationConditionsByAgeGroupFrom(
+        await vaccineApplicationsService.getApplicationConditionsByAgeGroupFrom(
           {
             province,
             city,
@@ -72,16 +73,19 @@ const registerVaccineApplicationsEndpoints = (app: any, services: Services) => {
     '/applications_sex_dose',
     async (req: ByLocationRequest, res: any) => {
       const { province, city } = req.query;
-      const response = vaccineApplicationsService.getVaccinesBySexAndDose({
-        province,
-        city,
-      });
+      const response = await vaccineApplicationsService.getVaccinesBySexAndDose(
+        {
+          province,
+          city,
+        }
+      );
       res.send(response);
     }
   );
 
   app.get('/application_vs_distribution', async (_: any, res: any) => {
-    const response = vaccineApplicationsService.getApplicationsVsDistribution();
+    const response =
+      await vaccineApplicationsService.getApplicationsVsDistribution();
     res.send(response);
   });
 
@@ -89,7 +93,7 @@ const registerVaccineApplicationsEndpoints = (app: any, services: Services) => {
     '/vaccine_dose_distribution',
     async (req: ByLocationRequest, res: any) => {
       const { province, city } = req.query;
-      const response = vaccineApplicationsService.getVaccineDistribution({
+      const response = await vaccineApplicationsService.getVaccineDistribution({
         province,
         city,
       });

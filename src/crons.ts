@@ -18,7 +18,7 @@ export const syncData = async (db: IDatabase<any>) => {
   if (Boolean(process.env.DELETE)) {
     console.log('deleting entries');
     await db.none('DELETE FROM vaccine_applications');
-    // await db.none('DELETE FROM vaccine_receptions');
+    await db.none('DELETE FROM vaccine_receptions');
   }
 
   saveVaccineApplicationsFile(db).then(async () => {
@@ -31,8 +31,8 @@ export const syncData = async (db: IDatabase<any>) => {
     });
   });
 
-  // saveVaccineReceptions(db).then(async () => {
-  //   console.log('finish to do receptions');
-  //   db.one('SELECT COUNT(*) FROM vaccine_receptions');
-  // });
+  saveVaccineReceptions(db).then(async () => {
+    console.log('finish to do receptions');
+    db.one('SELECT COUNT(*) FROM vaccine_receptions');
+  });
 };

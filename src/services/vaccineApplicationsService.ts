@@ -5,6 +5,7 @@ import {
   ApplicationVsDistributionResponse,
   ApplicationVsDistributionSqlResult,
 } from '../responses/applicationVsDistributionResponse';
+import { CountResponse } from '../responses/countResponse';
 import { VaccinesDailyResponse } from '../responses/vaccinesDailyResponse';
 import { VaccinesDetailByVaccineAndDoseResponse } from '../responses/vaccinesDetailByVaccineAndDoseResponse';
 import { VaccinesDetailCountResponse } from '../responses/vaccinesDetailCountResponse';
@@ -32,8 +33,8 @@ export interface VaccineApplicationsService {
 
   getDailyApplications(
     location: Location,
-    from_date: Date,
-    to_date: Date
+    from_date: Date | undefined,
+    to_date: Date | undefined
   ): Promise<Array<VaccinesDailyResponse>>;
 
   getVaccinesBySexAndDose(
@@ -73,7 +74,7 @@ const configure = (
   async getTotalVaccinesApplicated(location: Location) {
     return vaccineApplicationsRepository
       .getTotalVaccinesApplicated(location)
-      .then((result) => result)
+      .then((result) => new CountResponse(result))
       .catch((error) => {
         console.log('error in getTotalVaccinesApplicated');
         return error;
@@ -89,7 +90,7 @@ const configure = (
         result.map((each) => new ApplicationConditionsResponse(each))
       )
       .catch((error) => {
-        console.log('error in getApplicationConditionsByAgeGroupFrom');
+        console.log('error in getApplicationConditionsByAgeGroupFrom', error);
         return error;
       });
   },

@@ -2,6 +2,7 @@ import { IDatabase } from 'pg-promise';
 import { ApplicationConditionsSqlResult } from '../responses/applicationConditionsResponse';
 import { ApplicationSexDoseSqlResult } from '../responses/applicationSexDoseResponse';
 import { ApplicationVsDistributionSqlResult } from '../responses/applicationVsDistributionResponse';
+import { CountResultSql } from '../responses/countResponse';
 import { DailyApplicationsSqlResult } from '../responses/dailyApplications';
 import { VaccinesDetailByVaccineAndDoseSqlResult } from '../responses/vaccinesDetailByVaccineAndDoseResponse';
 import { VaccinesDetailCountSqlResult } from '../responses/vaccinesDetailCountResponse';
@@ -16,7 +17,7 @@ export interface VaccineApplicationsRepository {
     location: Location
   ): Promise<Array<VaccinesDetailCountSqlResult>>;
 
-  getTotalVaccinesApplicated(location: Location): Promise<Number>;
+  getTotalVaccinesApplicated(location: Location): Promise<CountResultSql>;
 
   getApplicationConditionsByAgeGroupFrom(
     location: Location,
@@ -76,10 +77,11 @@ const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
     );
   },
   async getTotalVaccinesApplicated(location: Location) {
-    if (!location.city && !location.province)
+    if (!location.city && !location.province) {
       return db.one('SELECT * FROM total_applications');
+    }
     return db.one(
-      `SELECT SUM(applications) FROM applications_by_place ` +
+      `SELECT SUM(applications) as totalapplications FROM applications_by_place ` +
         whereLocationStatement(location)
     );
   },
@@ -88,19 +90,24 @@ const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
     age_group: string | undefined
   ) {
     const locationCondition = location.province || location.city;
-
-    return db.many(
+    var query =
       `SELECT application_condition, sex, age_group, ${
-        locationCondition ? 'province, city' : ''
-      }, city, SUM(count) FROM applications_conditions_by_place ` +
-        whereLocationStatement(location) +
-        locationCondition
-        ? ` AND age_group = ${age_group} `
-        : `WHERE age_group = ${age_group} ` +
-            `GROUP BY application_condition, age_group ${
-              locationCondition ? 'province. city' : ''
-            }`
-    );
+        locationCondition ? 'province, city, ' : ''
+      }` +
+      ' SUM(count) AS count FROM applications_conditions_by_place ' +
+      whereLocationStatement(location);
+    if (age_group) {
+      query =
+        query +
+        `${locationCondition ? ' AND ' : ' WHERE '} age_group=${age_group}`;
+    }
+    query =
+      query +
+      `GROUP BY application_condition, age_group, sex ${
+        locationCondition ? ', province, city' : ''
+      }`;
+    console.log(query);
+    return db.many(query);
   },
   async getDailyApplications(
     location: Location,
@@ -108,12 +115,17 @@ const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
     to_date: Date | undefined
   ) {
     const locationCondition = location.province || location.city;
+    const dateCondition = from_date || to_date;
     return db.many(
       'SELECT * FROM daily_applications_by_vaccine' +
         whereLocationStatement(location) +
-        `${locationCondition ? ' WHERE ' : ' AND '}` +
-        `${from_date ? `application_date >= ${from_date}` : ''}` +
-        `${to_date ? `application_date <= ${to_date}` : ''}`
+        `${
+          dateCondition
+            ? `${locationCondition ? ' AND ' : ' WHERE '}` +
+              `${from_date ? `application_date >= ${from_date}` : ''}` +
+              `${to_date ? `application_date <= ${to_date}` : ''}`
+            : ''
+        }`
     );
   },
   async getApplicationsVsDistribution() {
