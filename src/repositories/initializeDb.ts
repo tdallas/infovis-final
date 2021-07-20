@@ -80,13 +80,14 @@ ORDER BY age_group)`;
 const applicationsConditionByPlaceViewQuery = `CREATE MATERIALIZED VIEW IF NOT EXISTS applications_conditions_by_place AS
 (
 SELECT 
-       application_jurisdiction,
-       application_department,
+       application_jurisdiction as province,
+       application_department as city,
        application_condition,
+       sex,
        age_group,
-       COUNT(*) as applications
+       COUNT(*) as count
 FROM vaccine_applications
-GROUP BY application_jurisdiction, application_department, application_condition, age_group
+GROUP BY application_jurisdiction, application_department, application_condition, age_group, sex
 ORDER BY application_jurisdiction)`;
 
 const materializedViews = [

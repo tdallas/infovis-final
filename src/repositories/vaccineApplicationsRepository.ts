@@ -1,53 +1,40 @@
 import { IDatabase } from 'pg-promise';
+import { ApplicationConditionsSqlResult } from '../responses/applicationConditionsResponse';
+import { ApplicationSexDoseSqlResult } from '../responses/applicationSexDoseResponse';
 import { DailyApplicationsSqlResult } from '../responses/dailyApplications';
-import { DoseDistributionByAgeGroupSqlResult } from '../responses/doseDistributionByAgeGroup';
+import { VaccinesDetailCountSqlResult } from '../responses/vaccinesDetailCountResponse';
+import { VaccinesDistributionSqlResult } from '../responses/vaccinesDistributionResponse';
 import { Location } from '../services/vaccineApplicationsService';
 
-export interface VaccineTypeDistributionByProvince {}
-
-export interface ApplicationConditionsByAgeGroup {}
-
 export interface VaccineApplicationsRepository {
-  getDoseDistributionByAgeGroup(
-    location: Location
-  ): Promise<Array<DoseDistributionByAgeGroupSqlResult>>;
-
   getVaccineDistribution(
     location: Location
-  ): Promise<Array<VaccineTypeDistributionByProvince>>;
+  ): Promise<Array<VaccinesDistributionSqlResult>>;
 
   getDetailedVaccineDistribution(
     location: Location
-  ): Promise<Array<VaccineTypeDistributionByProvince>>;
+  ): Promise<Array<VaccinesDetailCountSqlResult>>;
 
   getTotalVaccinesApplicated(location: Location): Promise<Number>;
-
-  getApplicationConditionsByAgeGroup(
-    age_group: string | undefined
-  ): Promise<Array<ApplicationConditionsByAgeGroup>>;
 
   getApplicationConditionsByAgeGroupFrom(
     location: Location,
     age_group: string | undefined
-  ): Promise<Array<ApplicationConditionsByAgeGroup>>;
+  ): Promise<Array<ApplicationConditionsSqlResult>>;
 
   getDailyApplications(
     location: Location
   ): Promise<Array<DailyApplicationsSqlResult>>;
-
-  getTotalApplicationsDistributionByVaccine(
-    age_group: string | undefined
-  ): Promise<Array<any>>;
 }
 
 const whereLocationStatement = (location: Location) => {
-  if (location.department && location.province) {
+  if (location.city && location.province) {
     return (
       `WHERE application_jurisdiction = '${location.province}'` +
-      ` AND application_department = '${location.department}' `
+      ` AND application_department = '${location.city}' `
     );
-  } else if (location.department) {
-    return `WHERE application_department = '${location.department}' `;
+  } else if (location.city) {
+    return `WHERE application_department = '${location.city}' `;
   } else if (location.province) {
     return `WHERE application_jurisdiction = '${location.province}' `;
   }
@@ -55,24 +42,6 @@ const whereLocationStatement = (location: Location) => {
 };
 
 const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
-  async getTotalApplicationsDistributionByVaccine(
-    age_group: string | undefined
-  ) {
-    return age_group
-      ? db.many(
-          'SELECT age_group, sex, sum(applications) FROM vaccines_applications_by_dose_and_age ' +
-            ` WHERE age_group = ${age_group}` +
-            ' GROUP BY age_group, sex'
-        )
-      : db.many('SELECT * FROM total_applications_by_vaccine_and_dose');
-  },
-  async getDoseDistributionByAgeGroup(location: Location) {
-    return db.many(
-      'SELECT age_group, dose_order, vaccine, sex, sum(applications) as applications FROM applications_by_place ' +
-        whereLocationStatement(location) +
-        ' GROUP BY age_group, dose_order, vaccine, sex ORDER BY age_group'
-    );
-  },
   async getVaccineDistribution(location: Location) {
     return db.many(
       `SELECT vaccine, sum(applications) as applications FROM applications_by_place ` +
@@ -82,40 +51,37 @@ const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
   },
   async getDetailedVaccineDistribution(location: Location) {
     return db.many(
-      `SELECT vaccine, sum(applications) as applications, application_jurisdiction,
-       application_department FROM applications_by_place ` +
+      `SELECT vaccine, sum(applications) as count, application_jurisdiction,
+       application_department, age_group, sex, dose_order as dose FROM applications_by_place ` +
         whereLocationStatement(location) +
-        ' GROUP BY vaccine, application_jurisdiction, application_department'
+        ' GROUP BY vaccine, application_jurisdiction, application_department, age_group, sex, dose_order'
     );
   },
   async getTotalVaccinesApplicated(location: Location) {
-    if (!location.department && !location.province)
+    if (!location.city && !location.province)
       return db.one('SELECT * FROM total_applications');
     return db.one(
       `SELECT SUM(applications) FROM applications_by_place ` +
         whereLocationStatement(location)
     );
   },
-  async getApplicationConditionsByAgeGroup(age_group: string | undefined) {
-    return db.many(
-      `SELECT age_group, application_condition, SUM(applicationns) FROM applications_conditions_by_place ` +
-        (age_group ? `WHERE age_group = ${age_group}` : '') +
-        'GROUP BY application_condition, age_group'
-    );
-  },
   async getApplicationConditionsByAgeGroupFrom(
     location: Location,
     age_group: string | undefined
   ) {
+    const locationCondition = location.province || location.city;
+
     return db.many(
-      `SELECT age_group, application_condition, SUM(applicationns) FROM applications_conditions_by_place ` +
+      `SELECT application_condition, sex, age_group, ${
+        locationCondition ? 'province, city' : ''
+      }, city, SUM(count) FROM applications_conditions_by_place ` +
         whereLocationStatement(location) +
-        (age_group && (location.province || location.department)
-          ? `AND age_group = ${age_group}`
-          : age_group
-          ? `WHERE age_group = ${age_group}`
-          : '') +
-        'GROUP BY application_condition, age_group'
+        locationCondition
+        ? ` AND age_group = ${age_group} `
+        : `WHERE age_group = ${age_group} ` +
+            `GROUP BY application_condition, age_group ${
+              locationCondition ? 'province. city' : ''
+            }`
     );
   },
   async getDailyApplications(location: Location) {

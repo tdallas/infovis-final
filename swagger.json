@@ -256,26 +256,8 @@
     },
     "/application_vs_distribution": {
       "get": {
-        "summary": "Returns the total applications and distribution per interval of vaccine receptions",
+        "summary": "Returns the total applications and distribution",
         "description": "",
-        "parameters": [
-          {
-            "in": "query",
-            "name": "province",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          },
-          {
-            "in": "query",
-            "name": "city",
-            "required": false,
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
         "responses": {
           "200": {
             "description": "",
@@ -324,6 +306,9 @@
           },
           "city": {
             "type": "string"
+          },
+          "age_group": {
+            "type": "string"
           }
         }
       },
@@ -370,6 +355,9 @@
           "province": { "type": "string" },
           "city": {
             "type": "string"
+          },
+          "age_group":{
+            "type": "string"
           }
         }
       },
@@ -388,8 +376,7 @@
         "type": "object",
         "properties": {
           "applications_count": { "type": "integer" },
-          "distribution_count": { "type": "integer" },
-          "date": { "type": "string", "format": "date" }
+          "distribution_count": { "type": "integer" }
         }
       }
     }

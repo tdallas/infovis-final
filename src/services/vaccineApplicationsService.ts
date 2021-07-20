@@ -11,7 +11,7 @@ import { DoseDistributionByAgeGroup } from '../responses/doseDistributionByAgeGr
 
 export interface Location {
   province: string | undefined;
-  department: string | undefined;
+  city: string | undefined;
 }
 
 export interface VaccineApplicationsService {
@@ -40,7 +40,7 @@ const configure = (
   async getDoseDistributionByAgeGroup(location?: Location) {
     return vaccineApplicationsRepository
       .getDoseDistributionByAgeGroup(
-        location || { province: undefined, department: undefined }
+        location || { province: undefined, city: undefined }
       )
       .then((response) => {
         return response.map((each) => new DoseDistributionByAgeGroup(each));
@@ -61,7 +61,7 @@ const configure = (
   async getDailyApplications(location?: Location) {
     return vaccineApplicationsRepository
       .getDailyApplications(
-        location || { province: undefined, department: undefined }
+        location || { province: undefined, city: undefined }
       )
       .then((response: Array<DailyApplicationsSqlResult>) => {
         return response.map((each) => new DailyApplications(each));
