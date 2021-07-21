@@ -22,7 +22,11 @@ const registerVaccineApplicationsEndpoints = (app: any, services: Services) => {
     res.send(response);
   });
 
-  app.get('/last_update', async (_: any, res: any) => {});
+  app.get('/last_update', async (_: any, res: any) => {
+    const response = await vaccineApplicationsService.getLastUpdate();
+
+    res.send(response);
+  });
 
   app.get(
     '/vaccines_detail_count',

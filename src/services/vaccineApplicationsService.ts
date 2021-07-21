@@ -1,3 +1,4 @@
+import { LastUpdateResultSql } from '../models/lastUpdate';
 import { VaccineApplicationsRepository } from '../repositories/vaccineApplicationsRepository';
 import { ApplicationConditionsResponse } from '../responses/applicationConditionsResponse';
 import { ApplicationSexDoseResponse } from '../responses/applicationSexDoseResponse';
@@ -15,7 +16,14 @@ export interface Location {
   city: string | undefined;
 }
 
+export interface LastUpdateStacked {
+  applications_last_update: Date | undefined;
+  receptions_last_update: Date | undefined;
+}
+
 export interface VaccineApplicationsService {
+  getLastUpdate(): Promise<LastUpdateStacked>;
+
   getVaccineDistribution(
     location: Location
   ): Promise<Array<VaccinesDetailByVaccineAndDoseResponse>>;
@@ -49,6 +57,22 @@ export interface VaccineApplicationsService {
 const configure = (
   vaccineApplicationsRepository: VaccineApplicationsRepository
 ): VaccineApplicationsService => ({
+  async getLastUpdate() {
+    const sqlLastUpdates = await vaccineApplicationsRepository.getLastUpdate();
+    var result: LastUpdateStacked = {
+      applications_last_update: undefined,
+      receptions_last_update: undefined,
+    };
+    sqlLastUpdates.forEach((each) => {
+      if (each.id === 1) {
+        result['applications_last_update'] = each.last_update;
+      } else {
+        result['receptions_last_update'] = each.last_update;
+      }
+    });
+
+    return result;
+  },
   async getVaccineDistribution(location: Location) {
     return vaccineApplicationsRepository
       .getVaccineDistribution(location)
