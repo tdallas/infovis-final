@@ -20,7 +20,7 @@ const createVaccineReceptionsTableQuery =
   'CREATE TABLE IF NOT EXISTS vaccine_receptions(id SERIAL PRIMARY KEY, reception_date date, dosis_received integer)';
 
 const createLastUpdateTableQuery =
-  'CREATE TABLE IF NOT EXISTS last_update(id SERIAL PRIMARY KEY, last_update date)';
+  'CREATE TABLE IF NOT EXISTS last_update(id SERIAL PRIMARY KEY, last_update timestamp)';
 
 const getDoseDistributionCountVieQuery = `CREATE MATERIALIZED VIEW IF NOT EXISTS dose_count AS (
   SELECT dose_order, COUNT(*) AS totalByDose
