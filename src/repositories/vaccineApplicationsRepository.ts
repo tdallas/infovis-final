@@ -1,4 +1,6 @@
 import { IDatabase } from 'pg-promise';
+import { getMaxListeners } from 'process';
+import { LastUpdateResultSql } from '../models/lastUpdate';
 import { ApplicationConditionsSqlResult } from '../responses/applicationConditionsResponse';
 import { ApplicationSexDoseSqlResult } from '../responses/applicationSexDoseResponse';
 import { ApplicationVsDistributionSqlResult } from '../responses/applicationVsDistributionResponse';
@@ -37,12 +39,14 @@ export interface VaccineApplicationsRepository {
   getApplicationsVsDistribution(): Promise<
     Array<ApplicationVsDistributionSqlResult>
   >;
+
+  getLastUpdate(): Promise<Array<LastUpdateResultSql>>;
 }
 
 const whereLocationStatement = (location: Location) => {
   if (location.city && location.province) {
     return (
-      `WHERE application_jurisdiction = '${location.province}'` +
+      `WHERE application_jurisdiction = '${location.province}' ` +
       ` AND application_department = '${location.city}' `
     );
   } else if (location.city) {
@@ -54,6 +58,9 @@ const whereLocationStatement = (location: Location) => {
 };
 
 const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
+  async getLastUpdate() {
+    return db.many(`SELECT * FROM last_update`);
+  },
   async getVaccineDistribution(location: Location) {
     const locationCondition = location.province || location.city;
 
@@ -119,7 +126,7 @@ const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
     const locationCondition = location.province || location.city;
     const dateCondition = from_date || to_date;
     return db.many(
-      'SELECT * FROM daily_applications_by_vaccine' +
+      'SELECT * FROM daily_applications_by_vaccine ' +
         whereLocationStatement(location) +
         `${
           dateCondition

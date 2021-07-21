@@ -24,6 +24,8 @@ const start = async (db: IDatabase<any>) => {
   console.log('initializing database if needed');
   await Promise.all(initializeDb(db));
 
+  console.log(db.one('SELECT COUNT(*) FROM vaccine_receptions'));
+
   const repositories = Repositories(db);
   const services = Services(repositories);
 
