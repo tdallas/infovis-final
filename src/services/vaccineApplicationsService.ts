@@ -103,7 +103,7 @@ const configure = (
       .getDailyApplications(location, from_date, to_date)
       .then((result) => result.map((each) => new VaccinesDailyResponse(each)))
       .catch((error) => {
-        console.log('error in getDailyApplications');
+        console.log('error in getDailyApplications', error);
         return error;
       });
   },
@@ -114,7 +114,7 @@ const configure = (
         result.map((each) => new ApplicationSexDoseResponse(each))
       )
       .catch((error) => {
-        console.log('error in getVaccinesBySexAndDose');
+        console.log('error in getVaccinesBySexAndDose', error);
         return error;
       });
   },
@@ -125,7 +125,7 @@ const configure = (
         result.map((each) => new ApplicationVsDistributionResponse(each))
       )
       .catch((error) => {
-        console.log('error in getApplicationsVsDistribution');
+        console.log('error in getApplicationsVsDistribution', error);
         return error;
       });
   },

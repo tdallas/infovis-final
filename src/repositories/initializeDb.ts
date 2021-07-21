@@ -60,8 +60,8 @@ FROM vaccine_applications_by_vaccine,
 
 const dailyApplicationsViewQuery = `CREATE MATERIALIZED VIEW IF NOT EXISTS daily_applications_by_vaccine AS
 (
-SELECT vaccine, application_date as date, COUNT(*), dose_order as dose, application_department as city,
-application_jurisdiction as province
+SELECT vaccine, application_date as date, COUNT(*), dose_order as dose, application_department,
+application_jurisdiction
 FROM vaccine_applications
 WHERE application_date IS NOT NULL
 GROUP BY application_date, vaccine, dose_order, application_department, application_jurisdiction
@@ -84,8 +84,8 @@ ORDER BY age_group)`;
 const applicationsConditionByPlaceViewQuery = `CREATE MATERIALIZED VIEW IF NOT EXISTS applications_conditions_by_place AS
 (
 SELECT 
-       application_jurisdiction as province,
-       application_department as city,
+       application_jurisdiction,
+       application_department,
        application_condition,
        sex,
        age_group,

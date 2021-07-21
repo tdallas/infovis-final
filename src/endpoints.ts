@@ -57,6 +57,7 @@ const registerVaccineApplicationsEndpoints = (app: any, services: Services) => {
     '/application_conditions',
     async (req: ApplicationsByAgeGroupRequest, res: any) => {
       const { province, city, age_group } = req.query;
+      console.log(age_group);
       const response =
         await vaccineApplicationsService.getApplicationConditionsByAgeGroupFrom(
           {

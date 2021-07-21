@@ -92,14 +92,16 @@ const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
     const locationCondition = location.province || location.city;
     var query =
       `SELECT application_condition, sex, age_group, ${
-        locationCondition ? 'province, city, ' : ''
+        locationCondition
+          ? 'application_jurisdiction as province, application_department as city, '
+          : ''
       }` +
       ' SUM(count) AS count FROM applications_conditions_by_place ' +
       whereLocationStatement(location);
     if (age_group) {
       query =
         query +
-        `${locationCondition ? ' AND ' : ' WHERE '} age_group=${age_group}`;
+        `${locationCondition ? ' AND ' : ' WHERE '} age_group='${age_group}' `;
     }
     query =
       query +
@@ -136,12 +138,18 @@ const configure = (db: IDatabase<any>): VaccineApplicationsRepository => ({
   async getVaccinesBySexAndDose(location: Location) {
     const locationCondition = location.province || location.city;
     return db.many(
-      `SELECT vaccine, dose_order AS dose, sex, SUM(applications), 
+      `SELECT vaccine, dose_order AS dose, sex, SUM(applications) as count
         ${
           locationCondition
-            ? `application_jurisdiction AS province, application_department AS city`
+            ? `, application_jurisdiction AS province, application_department AS city `
             : ''
-        } FROM applications_by_place` + whereLocationStatement(location)
+        } FROM applications_by_place ` +
+        whereLocationStatement(location) +
+        ` GROUP BY vaccine, dose_order, sex ${
+          locationCondition
+            ? ', application_jurisdiction, application_department'
+            : ''
+        }`
     );
   },
 });
